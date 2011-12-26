@@ -1,0 +1,430 @@
+<!doctype html>
+<html>
+<head>
+    <title>kkj.no tests</title>
+    <link rel="stylesheet" href="qunit.css" type="text/css" />
+    <script type="text/javascript" src="qunit.js"></script>
+    <script type="text/javascript" src="ext-3.4.0/adapter/ext/ext-base-debug.js"></script>
+    <script type="text/javascript" src="ext-3.4.0/ext-all-debug.js"></script>
+    <script type="text/javascript" src="kkj.evt.js"></script>
+    <script type="text/javascript" src="kkj.data.js"></script>
+    <script type="text/javascript">
+
+        module("kkj.evt");
+
+        test("Deferred: constructor: no jq, kkj object", function () {
+
+            // Fixture setup ...
+            
+            // Exercise SUT ...
+            var deferred = new kkj.evt.Deferred();
+
+            // Verify SUT ...
+            ok(deferred);
+        });
+
+        test("Deferred: always, error", function () {
+
+            // Fixture setup ...
+            var deferred = new kkj.evt.Deferred();
+            
+            // Exercise and verify SUT ...
+            raises(function () {
+                deferred.always();
+            });
+        });
+
+        test("Deferred: state: initial pending", function () {
+
+            // Fixture setup ...
+            var deferred = new kkj.evt.Deferred();
+            
+            // Exercise SUT ...
+            var state = deferred.state();
+
+            // Verify SUT ...
+            ok(state, "pending");
+        });
+
+        test("Deferred: then with no arg, error", function () {
+
+            // Fixture setup ...
+            var deferred = new kkj.evt.Deferred();
+            
+            // Exercise and verify SUT ...
+            raises(function () {
+                deferred.then();
+            });
+        });
+
+        test("Deferred: then with array arg, error", function () {
+
+            // Fixture setup ...
+            var deferred = new kkj.evt.Deferred();
+            
+            // Exercise and verify SUT ...
+            raises(function () {
+                deferred.then([]);
+            });
+        });
+
+        test("Deferred: then with two args, error", function () {
+
+            // Fixture setup ...
+            var deferred = new kkj.evt.Deferred();
+            
+            // Exercise and verify SUT ...
+            raises(function () {
+                deferred.then(function () {}, true);
+            });
+        });
+
+        test("Deferred: resolve: callback called with args", function () {
+
+            // Fixture setup ...
+            var expectedArg1 = 1;
+            var expectedArg2 = 2;
+            var called = false;
+            var deferred = new kkj.evt.Deferred();
+            deferred.then(function (actualArg1, actualArg2) {
+                called = true;
+                strictEqual(actualArg1, expectedArg1);
+                strictEqual(actualArg2, expectedArg2);
+            });
+            
+            // Exercise SUT ...
+            deferred.resolve(expectedArg1, expectedArg2);
+
+            // Verify SUT ...
+            ok(called);
+        });
+
+        test("Deferred: resolve: state resolved", function () {
+
+            // Fixture setup ...
+            var deferred = new kkj.evt.Deferred();
+            
+            // Exercise SUT ...
+            deferred.resolve();
+
+            // Verify SUT ...
+            strictEqual(deferred.state(), "resolved");
+        });
+
+        test("Deferred: resolve: second call ignored", function () {
+
+            // Fixture setup ...
+            var numberOfCalls = 0;
+            var deferred = new kkj.evt.Deferred();
+            deferred.then(function () {
+                numberOfCalls++;
+            });
+            
+            // Exercise SUT ...
+            deferred.resolve();
+            deferred.resolve();
+
+            // Verify SUT ...
+            strictEqual(numberOfCalls, 1);
+        });
+
+        test("Deferred: then: callback called w args when resolved", function () {
+
+            // Fixture setup ...
+            var arg = 1;
+            var called = false;
+            var deferred = new kkj.evt.Deferred();
+            deferred.resolve(arg);
+
+            // Exercise SUT ...
+            deferred.then(function (actualArg) {
+                called = true;
+                strictEqual(actualArg, arg);
+            });
+            
+            // Verify SUT ...
+            ok(called);
+        });
+
+        test("Deferred: promise, arg, error", function () {
+
+            // Fixture setup ...
+            var deferred = new kkj.evt.Deferred();
+            
+            // Exercise and verify SUT ...
+            raises(function () {
+                deferred.promise(true);
+            });
+        });
+
+        test("Deferred: promise, then can access callback array", function () {
+
+            // Fixture setup ...
+            var deferred = new kkj.evt.Deferred();
+
+            //  Exercise SUT ...
+            var promise = deferred.promise();
+            
+            // Verify SUT ...
+            promise.then(function () {});
+        });
+
+        test("Deferred: promise, has state, no resolve", function () {
+
+            // Fixture setup ...
+            var deferred = new kkj.evt.Deferred();
+
+            //  Exercise SUT ...
+            var promise = deferred.promise();
+            
+            // Verify SUT ...
+            strictEqual(promise.state(), "pending");
+            ok(typeof promise.resolve, "undefined");
+        });
+
+        // ================================================================= //
+
+        module("kkj.data");
+
+        test("YqlMerge: serviceUrl", function () {
+
+            // Fixture setup ...
+            var url = kkj.data.YqlMerge._serviceUrl;
+
+            // Verify SUT ...
+            ok(Ext.isString(url));
+        });
+
+        test("YqlMerge: url", function () {
+
+            // Fixture setup ...
+            var query = " ";
+            var callback = "callback";
+
+            // Exercise SUT ...
+            var url = kkj.data.YqlMerge.url(query, callback);
+
+            // Verify SUT ...
+            ok(Ext.isString(url));
+            notStrictEqual(url.indexOf("?q=%20&"), -1);
+            var queryPart = url.substring(url.indexOf("?") + 1);
+            var params = Ext.urlDecode(queryPart);
+            strictEqual(params.q, query);
+            strictEqual(params.format, "json");
+            strictEqual(params.callback, callback);
+        });
+
+        test("YqlMerge: _callbackName", function () {
+
+            // Fixture setup ...
+            var source = "twitter";
+
+            // Exercise SUT ...
+            var callback = kkj.data.YqlMerge._callbackName(source);
+
+            // Verify SUT ...
+            strictEqual(callback, source + "Callback");
+        });
+
+        var baseMock = Ext.apply(
+            {},
+            { 
+                window: {
+                    document: {
+                        createElement: function () { return {}; },
+                        body: { appendChild: function () { } }
+                    }
+                } 
+            },
+            kkj.data.YqlMerge
+        );
+
+        test("YqlMerge: _fetch: calls _callbackName", function () {
+
+            // Fixture setup ...
+            var spec = { source: "foo" };
+            var _callbackNameCalled = false;
+            var mock = Ext.apply(
+                {},
+                {
+                    _callbackName: function (source) {
+                        _callbackNameCalled = true;
+                        strictEqual(source, spec.source);
+                    }
+                },
+                baseMock
+            );
+
+            // Exercise SUT ...
+            kkj.data.YqlMerge._fetch.call(mock, spec);
+
+            // Verify SUT ...
+            ok(_callbackNameCalled);
+        });
+
+        test("YqlMerge: _fetch: calls url", function () {
+
+            // Fixture setup ...
+            var spec = {
+                source: "foo",
+                query: "select * from foo"
+            };
+            var urlCalled = false;
+            var mock = Ext.apply(
+                {},
+                {
+                    url: function (query, callback) {
+                        urlCalled = true;
+                        strictEqual(query, spec.query);
+                        strictEqual(callback, kkj.data.YqlMerge._callbackName(spec.source));
+                    }
+                },
+                baseMock
+            );
+
+            // Exercise SUT ...
+            kkj.data.YqlMerge._fetch.call(mock, spec);
+
+            // Verify SUT ...
+            ok(urlCalled);
+        });
+
+        test("YqlMerge: _fetch: adds callback, callback deletes win ref", function () {
+
+            // Fixture setup ...
+            var spec = {
+                source: "foo",
+                query: "select * from foo",
+                data: function () { }
+            };
+            var mock = Ext.apply({}, baseMock);
+
+            // Exercise SUT ...
+            kkj.data.YqlMerge._fetch.call(mock, spec, { done: function () { } });
+
+            // Verify SUT ...
+            var callbackName = kkj.data.YqlMerge._callbackName(spec.source);
+            ok(typeof mock.window[callbackName] === "function");
+            mock.window[callbackName]();
+            ok(typeof mock.window[callbackName] === "undefined");
+        });
+
+        test("YqlMerge: _fetch: creates and appends script element", function () {
+
+            // Fixture setup ...
+            var spec = {
+                source: "foo",
+                query: "select * from foo"
+            };
+            var createElementCalled = false;
+            var appendChildCalled = false;
+            var element = {};
+            var mock = Ext.apply(
+                {},
+                {
+                    window: {
+                        document: {
+                            createElement: function (nodeName) {
+                                createElementCalled = true;
+                                strictEqual(nodeName, "script");
+                                return element;
+                            },
+                            body: {
+                                appendChild: function (actualElement) {                                
+                                    appendChildCalled = true;
+                                    strictEqual(actualElement, element);
+                                }
+                            }
+                        }
+                    }
+                },
+                baseMock
+            );
+
+            // Exercise SUT ...
+            kkj.data.YqlMerge._fetch.call(mock, spec);
+
+            // Verify SUT ...
+            ok(createElementCalled);
+            var src = kkj.data.YqlMerge.url(spec.query, kkj.data.YqlMerge._callbackName(spec.source));
+            strictEqual(element.src, src);
+            ok(appendChildCalled);
+        });
+
+        test("YqlMerge: _fetch: calls session done with fixed data", function () {
+
+            // Fixture setup ...
+            var dataCalled = false;
+            var fixedData = [ "foo" ];
+            var spec = {
+                source: "foo",
+                query: "select * from foo",
+                data: function (data) {
+                    dataCalled = true;
+                    return fixedData;
+                }
+            };
+            var doneCalled = false;
+            var data = [ "foo", "bar" ];
+            var session = {
+                done: function (actualFixedData) {
+                    doneCalled = true;
+                    strictEqual(actualFixedData, fixedData);
+                }
+            };
+            var mock = Ext.apply({}, baseMock);
+
+            // Exercise SUT ...
+            kkj.data.YqlMerge._fetch.call(mock, spec, session)();
+
+            // Verify SUT ...
+            ok(dataCalled);
+            ok(doneCalled);
+        });
+
+        test("YqlMerge: merge: calls _fetch with query and session", function () {
+
+            // Fixture setup ...
+            var query = { foo: "bar" };
+            var queries = [ query ];
+            var _fetchCalled = false;
+            var data = [ "foo", "bar" ];
+            var mock = Ext.apply(
+                {},
+                {
+                    _fetch: function (actualQuery, session) {
+                        _fetchCalled = true;
+                        strictEqual(actualQuery, query);
+                        strictEqual(session._numFetched, 0);
+                        strictEqual(typeof session.done, "function");
+                        session.done(data);
+                        strictEqual(session._numFetched, 1);
+                    }
+                },
+                baseMock
+            );
+            var callbackCalled = false;
+            var callback = function (actualData) {
+                callbackCalled = true;
+                deepEqual(actualData, data);
+            };
+
+            // Exercise SUT ...
+            kkj.data.YqlMerge.merge.call(mock, queries).then(callback);
+
+            // Verify SUT ...
+            ok(_fetchCalled);
+            ok(callbackCalled);
+        });
+
+    </script>
+</head>
+<body>
+    <h1 id="qunit-header">kkj.no tests</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+    <div id="qunit-fixture"></div>
+</body>
+</html>
