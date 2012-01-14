@@ -53,6 +53,7 @@ kkj.evt = {
                 return;
             }
             _doneCallbacks.push(doneCallback);
+            return this;
         };
 
         this.resolve = function (args) {
@@ -72,6 +73,7 @@ kkj.evt = {
             for (var i = 0; i < numberOfCallbacks; i++) {
                 _doneCallbacks[i].apply(this, arguments);
             }
+            return this;
         };
 
         this.promise = function () {

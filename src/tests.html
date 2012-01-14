@@ -4,8 +4,7 @@
     <title>kkj.no tests</title>
     <link rel="stylesheet" href="qunit.css" type="text/css" />
     <script type="text/javascript" src="qunit.js"></script>
-    <script type="text/javascript" src="ext-3.4.0/adapter/ext/ext-base-debug.js"></script>
-    <script type="text/javascript" src="ext-3.4.0/ext-all-debug.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/ext-core/3.1.0/ext-core.js"></script>
     <script type="text/javascript" src="kkj.evt.js"></script>
     <script type="text/javascript" src="kkj.data.js"></script>
     <script type="text/javascript">
@@ -79,6 +78,18 @@
             });
         });
 
+        test("Deferred: then: returns deferred", function () {
+
+            // Fixture setup ...
+            var deferred = new kkj.evt.Deferred();
+            
+            // Exercise SUT ...
+            var actualDeferred = deferred.then(function () {});
+
+            // Verify SUT...
+            strictEqual(actualDeferred, deferred);
+        });
+
         test("Deferred: resolve: callback called with args", function () {
 
             // Fixture setup ...
@@ -126,6 +137,18 @@
 
             // Verify SUT ...
             strictEqual(numberOfCalls, 1);
+        });
+
+        test("Deferred: resolve: returns deferred", function () {
+
+            // Fixture setup ...
+            var deferred = new kkj.evt.Deferred();
+            
+            // Exercise SUT ...
+            var actualDeferred = deferred.resolve();
+
+            // Verify SUT ...
+            strictEqual(actualDeferred, deferred);
         });
 
         test("Deferred: then: callback called w args when resolved", function () {
