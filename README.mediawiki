@@ -1,3 +1,1 @@
-== kkj ==
-
 Knut's JavaScript projects.
