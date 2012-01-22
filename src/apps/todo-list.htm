@@ -1,0 +1,165 @@
+﻿<!doctype html>
+<html><head><meta charset="utf-8" />
+    <title>Todo list</title>
+    <link
+        rel="stylesheet"
+        href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
+    <script src="http://code.jquery.com/jquery-1.6.4.min.js">
+    </script>
+    <script type="text/javascript">
+
+        // jQuery Mobile initialization …
+        $(document)
+            .bind("mobileinit", function () {
+                $.extend($.mobile, {
+                    autoInitializePage: false,
+                    linkBindingEnabled: false,
+                    pushStateEnabled: false,
+                    hashListeningEnabled: false
+                });
+            })
+            .bind("pagebeforechange", function (e, data) {
+                var changedByUs = !!data.options.byUs;
+                if (!changedByUs) {
+                    e.preventDefault();
+                }
+            });
+
+    </script>
+    <script src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.js">
+    </script>
+    <script type="text/javascript">
+
+        // Page generation …
+        function createPage (title, content) {
+            return $([
+                '<section data-role="page">',
+                    '<header data-role="header">',
+                        "<h1>", title, "</h1>",
+                    "</header>",
+                    '<div data-role="content">',
+                        content,
+                    "</div>",
+                "</section>"
+            ].join("")).appendTo("body");
+        }
+
+        var items = JSON.parse(localStorage.getItem("todos")) || [];
+        function createList () {
+            var list = [ '<ul data-role="listview">' ];
+            $.each(items, function (i, item) {
+                if (item) {
+                    list.push(
+                        "<li>",
+                            '<a href="#todos/', i, '">', item.title, "</a>",
+                        "</li>"
+                    );
+                }
+            });
+            list.push("</ul>");
+            return list.join("");
+        }
+
+        $(function () {
+            $("#add a").click(function () {
+                items.push({
+                    title: $("#title").val(),
+                    desc: $("#desc").val()
+                });
+                $("#title, #desc").val("");
+                updateList();
+            });
+            createPage("Todos", createList())
+                .attr("id", "list")
+                .append(createListFooter());
+            $.mobile.initializePage();
+            $(window)
+                .bind("hashchange", function () {
+                    var url = window.location.href,
+                        hash = $.mobile.path.parseUrl(url).hash;
+                    route(hash);
+                })
+                .trigger("hashchange");
+        });
+
+        function updateList () {
+            $("[data-role=listview]")
+                .empty()
+                .append($(createList()).children())
+                .listview("refresh");
+            localStorage.setItem("todos", JSON.stringify(items));
+        }
+
+        function createListFooter () {
+            return [
+                '<footer data-role="footer" class="ui-bar">',
+                    '<a href="#todo/add" ',
+                        'data-role="button" data-icon="plus">Add</a>',
+                "</footer>"
+            ].join("");
+        }
+
+        var pattern = /\/(\w+)/;
+        function route (route) {
+            var match = pattern.exec(route);
+            var showList = match === null;
+            if (showList) {
+                changePage($("#list"));
+            } else if (match[1] === "add") {
+                changePage($("#add"));
+            } else {
+                var itemId = match[1];
+                changePage(getItemPage(itemId));
+            }
+        }
+
+        function changePage (page) {
+            $.mobile.changePage(page, {
+                byUs: true,
+                transition: "none",
+                changeHash: false
+            });
+            $.mobile.urlHistory.stack = [];
+        }
+
+        function getItemPage (id) {
+            var existingItemPage = $("#item" + id);
+            if (existingItemPage.size() === 1) {
+                return existingItemPage;
+            }
+            var item = items[id];
+            return createPage(item.title, item.desc)
+                .attr("id", "item" + id)
+                .attr("data-add-back-btn", "true")
+                .append(createItemFooter().find("a").click(function () {
+                    items[id] = null;
+                    updateList();
+                }).end());
+        }
+
+        function createItemFooter (id) {
+            return $([
+                '<footer data-role="footer" class="ui-bar">',
+                    '<a href="#"',
+                        'data-role="button" data-icon="delete">Delete</a>',
+                "</footer>"
+            ].join(""));
+        }
+
+    </script>
+</head>
+<body>
+    <section id="add" data-role="page">
+        <header data-role="header">
+            <h1>Add todo</h1>
+        </header>
+        <div data-role="content">
+            <label for="title">Title:</label>
+            <input type="text" name="title" id="title" value="" />
+            <label for="desc">Description:</label>
+            <input type="text" name="desc" id="desc" value="" />
+            <a href="#" data-role="button">Ok</a>
+        </div>
+    </section>
+</body>
+</html>
