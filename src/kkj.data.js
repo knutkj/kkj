@@ -8,6 +8,13 @@ kkj.data._YqlMerge = function (window) {
     this.window = window;
 };
 
+kkj.data._YqlMerge._assertSchemaValid = function () {
+    /// <summary>
+    /// Asserts that the specified schema is valid.
+    /// </summary>
+
+};
+
 kkj.data._YqlMerge.prototype = {
     
     _serviceUrl: [
