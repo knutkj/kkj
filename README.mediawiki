@@ -1,6 +1,6 @@
 Knut's JavaScript projects:
 
-* [[#Call by Contract (CbC)]]
+* [[Call by Contract (CbC)]]
 
 == Call by Contract (CbC) ==
 
@@ -27,11 +27,11 @@ http://github.com/knutkj/kkj/blob/master/src/cbc.assert.js.
 
 Here is a simple example of usage:
 
- function showMessage (message) {
-     cbc.assert.that.param("message", message).is
-         .defined()
-         .and.notNull()
-         .and.string()
-         .and.notEmpty();
-         alert(message);
- }
+<pre>function showMessage (message) {
+    cbc.assert.that.param("message", message).is
+        .defined()
+        .and.notNull()
+        .and.string()
+        .and.notEmpty();
+        alert(message);
+}</pre>
