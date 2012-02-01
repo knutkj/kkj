@@ -1,4 +1,6 @@
-Knut's JavaScript projects.
+Knut's JavaScript projects:
+
+* [[#Call by Contract (CbC)]]
 
 == Call by Contract (CbC) ==
 
@@ -21,15 +23,15 @@ The library can be installed with
 [http://en.wikipedia.org/wiki/Nuget NuGet].
 You can find the package here: http://nuget.org/packages/cbc.
 Here is a link to the source code:
-https://github.com/knutkj/kkj/blob/master/src/cbc.assert.js.
+http://github.com/knutkj/kkj/blob/master/src/cbc.assert.js.
 
 Here is a simple example of usage:
 
  function showMessage (message) {
-	cbc.assert.that.param("message", message).is
-		.defined()
-		.and.notNull()
-		.and.string()
-		.and.notEmpty();
-	alert(message);
+     cbc.assert.that.param("message", message).is
+         .defined()
+         .and.notNull()
+         .and.string()
+         .and.notEmpty();
+         alert(message);
  }
