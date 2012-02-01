@@ -2,28 +2,28 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>cbc</id>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <title>Call by Contract (CbC)</title>
         <authors>Knut Kristian Johansen</authors>
         <owners>Knut Kristian Johansen</owners>
         <projectUrl>http://github.com/knutkj/kkj</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <summary>
-            
-            A JavaScript framework with function argument assertions.
+
+            A JavaScript library with function argument assertions.
             It contains defined, notNull, bool, func, number, object,
             string and notEmpty assertions. The interface is fluid
             and specially optimised for the Visual Studio JavaScript
-            intellisense.
+            IntellIsense.
 
         </summary>
         <description>
 
-            A JavaScript framework with function argument assertions.
+            A JavaScript library with function argument assertions.
             It contains defined, notNull, bool, func, number, object,
             string and notEmpty assertions. The interface is fluid
             and specially optimised for the Visual Studio JavaScript
-            intellisense.
+            IntellIsense.
 
             Note that the assertions are not for unit testing,
             but for function arguments.
@@ -32,13 +32,13 @@
             (DbC) implementation. For more information about DcB visit:
             http://en.wikipedia.org/wiki/Design_by_contract.
 
-            The name of this framework is Call by Contract (CbC).
+            The name of this library is Call by Contract (CbC).
             The name will be more natural in a later release with
             more functionality.
 
         </description>
         <releaseNotes>
-            Initial release.
+            1.0.1: Creates a jQuery plugin if you have jQuery included.
         </releaseNotes>
         <copyright>Copyright 2012</copyright>
         <tags>
