@@ -6,7 +6,9 @@
         <title>Call by Contract (CbC)</title>
         <authors>Knut Kristian Johansen</authors>
         <owners>Knut Kristian Johansen</owners>
-        <projectUrl>http://github.com/knutkj/kkj</projectUrl>
+        <projectUrl>
+            http://github.com/knutkj/kkj/wiki/Call-by-Contract-(CbC)
+        </projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <summary>
 
