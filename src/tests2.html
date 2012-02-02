@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+    <title>tests2</title>
+    <link rel="stylesheet" href="qunit.css" type="text/css" />
+    <script type="text/javascript" src="qunit.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="cbc.assert.js"></script>
+    <script type="text/javascript">
+
+        module("cbc.assert");
+
+
+        test("Creates jQuery utility function", function () {
+    
+            // Verify SUT...
+            strictEqual(typeof $.assert, "object");
+            strictEqual(typeof $.assert.param, "function");
+    
+            // Fixture teardown...
+        });
+
+    </script>
+</head>
+<body>
+    <h1 id="qunit-header">kkj.no tests</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+    <div id="qunit-fixture"></div>
+</body>
+</html>

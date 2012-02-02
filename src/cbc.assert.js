@@ -228,4 +228,6 @@
         };
     };
 
+    $ && ($.assert = cbc.assert);
+
 })(cbc.private && (cbc.private.assert = {}) || {}, window.jQuery);

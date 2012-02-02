@@ -33,6 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="tests2.html" />
     <Content Include="kkj.evt.tests.js" />
     <Content Include="kkj.param.js" />
     <Content Include="cbc.private.js" />
@@ -49,7 +50,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cbc.ps1" />
     <None Include="cbc.nuspec" />
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="AjaxMin">
+      <HintPath>packages\AjaxMin.4.44.4396.18853\lib\net20\AjaxMin.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
