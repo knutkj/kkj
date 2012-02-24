@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>cbc</id>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
         <title>Call by Contract (CbC)</title>
         <authors>Knut Kristian Johansen</authors>
         <owners>Knut Kristian Johansen</owners>
@@ -40,7 +40,8 @@
 
         </description>
         <releaseNotes>
-            1.0.1: Creates a jQuery plugin if you have jQuery included.
+            1.0.2: Removed all usages of private because it is reserved
+            for future use in JavaScript.
         </releaseNotes>
         <copyright>Copyright 2012</copyright>
         <tags>
