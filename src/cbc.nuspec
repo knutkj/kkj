@@ -16,7 +16,7 @@
             It contains defined, notNull, bool, func, number, object,
             string and notEmpty assertions. The interface is fluid
             and specially optimised for the Visual Studio JavaScript
-            IntellIsense.
+            IntelliSense.
 
         </summary>
         <description>
@@ -44,7 +44,7 @@
         </releaseNotes>
         <copyright>Copyright 2012</copyright>
         <tags>
-            JavaScipt, DbC, assert, assertion
+            JavaScript, DbC, assert, assertion
         </tags>
     </metadata>
     <files>

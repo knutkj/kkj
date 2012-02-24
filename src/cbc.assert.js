@@ -25,7 +25,7 @@
         this.param = param;
         this.value = value;
         this.stack = [];
-        var private = this;
+        var priv = this;
 
         function defined () {
             /// <summary>
@@ -33,64 +33,64 @@
             /// That means that it has been specified
             /// so that it's value is not undefined.
             /// </summary>
-            private.assertDefined();
-            return private.newIs("defined");
+            priv.assertDefined();
+            return priv.newIs("defined");
         }
 
         function notNull () {
             /// <summary>
             /// Asserts that the parameter is not null.
             /// </summary>
-            private.assertNotNull();
-            return private.newIs("notNull");
+            priv.assertNotNull();
+            return priv.newIs("notNull");
         }
 
         function bool () {
             /// <summary>
             /// Asserts that the parameter is of type boolean.
             /// </summary>
-            private.assertValueOfType("boolean");
-            return private.newIs("bool");
+            priv.assertValueOfType("boolean");
+            return priv.newIs("bool");
         }
 
         function func () {
             /// <summary>
             /// Asserts that the parameter is of type function.
             /// </summary>
-            private.assertValueOfType("function");
-            return private.newIs("func");
+            priv.assertValueOfType("function");
+            return priv.newIs("func");
         }
 
         function number () {
             /// <summary>
             /// Asserts that the parameter is of type number.
             /// </summary>
-            private.assertValueOfType("number");
-            return private.newIs("number");
+            priv.assertValueOfType("number");
+            return priv.newIs("number");
         }
 
         function object () {
             /// <summary>
             /// Asserts that the parameter is of type object.
             /// </summary>
-            private.assertValueOfType("object");
-            return private.newIs("object");
+            priv.assertValueOfType("object");
+            return priv.newIs("object");
         }
 
         function string () {
             /// <summary>
             /// Asserts that the parameter is of type string.
             /// </summary>
-            private.assertValueOfType("string");
-            return private.newIs("string");
+            priv.assertValueOfType("string");
+            return priv.newIs("string");
         }
 
         this.notEmpty = function () {
             /// <summary>
             /// Asserts that the parameter is not empty string.
             /// </summary>
-            private.assertNotEmptyString();
-            return private.newIs("notEmpty");
+            priv.assertNotEmptyString();
+            return priv.newIs("notEmpty");
         };
 
         this.is = {
@@ -230,4 +230,4 @@
 
     $ && ($.assert = cbc.assert);
 
-})(cbc.private && (cbc.private.assert = {}) || {}, window.jQuery);
+})(cbc.priv && (cbc.priv.assert = {}) || {}, window.jQuery);

@@ -1,15 +1,15 @@
 ﻿/// <reference path="https://ajax.googleapis.com/ajax/libs/ext-core/3.1.0/ext-core.js" />
 /// <reference path="qunit.js" />
-/// <reference path="cbc.private.js" />
+/// <reference path="cbc.priv.js" />
 /// <reference path="cbc.assert.js" />
 
 // ==============================================
-//  cbc.private.assert
+//  cbc.priv.assert
 // ==============================================
 
-module("cbc.private.assert");
+module("cbc.priv.assert");
 
-var assertClass = cbc.private.assert.assert;
+var assertClass = cbc.priv.assert.assert;
 var assertProto = assertClass.prototype;
 
 test("assertDefined: value undefined, error w correct msg", function () {
@@ -156,7 +156,7 @@ test("assertNotEmptyString: val undef/null/num/string: ok", function () {
 
 function assertContext () {
     var is = {};
-    for (var assert in (new cbc.private.assert.assert().is)) {
+    for (var assert in (new cbc.priv.assert.assert().is)) {
         is[assert] = function () {};
     }
     return { stack: [], notEmpty: function () {}, is: is };
@@ -168,9 +168,9 @@ function numProps (object) {
     return numProps;
 }
 
-var numAsserts = numProps(new cbc.private.assert.assert().is);
+var numAsserts = numProps(new cbc.priv.assert.assert().is);
 var numAssertsAfterTypesRemoved = 
-    numAsserts - cbc.private.assert.typeAsserts.length;
+    numAsserts - cbc.priv.assert.typeAsserts.length;
 
 test("typeAsserts: exists in is", function () {
 
@@ -178,7 +178,7 @@ test("typeAsserts: exists in is", function () {
     var is = cbc.assert.param("param", "val").is;
 
     // Exercise SUT...
-    var typeAsserts = cbc.private.assert.typeAsserts;
+    var typeAsserts = cbc.priv.assert.typeAsserts;
 
     // Verify SUT...
     for (var i = 0; i < typeAsserts.length; i++) {
@@ -419,7 +419,7 @@ test("defined: calls assertDefined and newIs w args", function () {
     var expectedAssert = "defined";
     var newIs = "theNewIs";
     var assert = Ext.apply(
-        new cbc.private.assert.assert("param", "value"), 
+        new cbc.priv.assert.assert("param", "value"), 
         {
             assertDefined: function () {
                 assertDefinedCalled = true;
@@ -477,7 +477,7 @@ test("notNull: calls assertNotNull and newIs w args", function () {
     var expectedAssert = "notNull";
     var newIs = "theNewIs";
     var assert = Ext.apply(
-        new cbc.private.assert.assert("param", "value"), 
+        new cbc.priv.assert.assert("param", "value"), 
         {
             assertNotNull: function () {
                 assertNotNullCalled = true;
@@ -509,7 +509,7 @@ test("bool: calls assertValueOfType and newIs w args", function () {
     var expectedAssert = "bool";
     var newIs = "theNewIs";
     var assert = Ext.apply(
-        new cbc.private.assert.assert("param", "value"), 
+        new cbc.priv.assert.assert("param", "value"), 
         {
             assertValueOfType: function (actualType) {
                 assertValueOfTypeCalled = true;
@@ -568,7 +568,7 @@ test("func: calls assertValueOfType and newIs w args", function () {
     var expectedAssert = "func";
     var newIs = "theNewIs";
     var assert = Ext.apply(
-        new cbc.private.assert.assert("param", "value"), 
+        new cbc.priv.assert.assert("param", "value"), 
         {
             assertValueOfType: function (actualType) {
                 assertValueOfTypeCalled = true;
@@ -627,7 +627,7 @@ test("number: calls assertValueOfType and newIs w args", function () {
     var expectedAssert = "number";
     var newIs = "theNewIs";
     var assert = Ext.apply(
-        new cbc.private.assert.assert("param", "value"), 
+        new cbc.priv.assert.assert("param", "value"), 
         {
             assertValueOfType: function (actualType) {
                 assertValueOfTypeCalled = true;
@@ -686,7 +686,7 @@ test("object: calls assertValueOfType and newIs w args", function () {
     var expectedAssert = "object";
     var newIs = "theNewIs";
     var assert = Ext.apply(
-        new cbc.private.assert.assert("param", "value"), 
+        new cbc.priv.assert.assert("param", "value"), 
         {
             assertValueOfType: function (actualType) {
                 assertValueOfTypeCalled = true;
@@ -745,7 +745,7 @@ test("string: calls assertValueOfType and newIs w args", function () {
     var expectedAssert = "string";
     var newIs = "theNewIs";
     var assert = Ext.apply(
-        new cbc.private.assert.assert("param", "value"), 
+        new cbc.priv.assert.assert("param", "value"), 
         {
             assertValueOfType: function (actualType) {
                 assertValueOfTypeCalled = true;
@@ -803,7 +803,7 @@ test("notEmpty: calls assertValueOfType and newIs w args", function () {
     var newIsCalled = false;
     var expectedAssert = "notEmpty";
     var newIs = "theNewIs";
-    var tmp = new cbc.private.assert.assert("param", "value");
+    var tmp = new cbc.priv.assert.assert("param", "value");
     var is = tmp.is.string().and;
     var assert = Ext.apply(tmp, 
         {
