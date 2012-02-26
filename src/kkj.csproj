@@ -40,6 +40,7 @@
     <Content Include="cbc.parse.tests.js" />
     <Content Include="cbc.priv.js" />
     <Content Include="cbc.README.txt" />
+    <Content Include="min-tests.html" />
     <Content Include="tests2.html" />
     <Content Include="kkj.evt.tests.js" />
     <Content Include="kkj.data.js" />

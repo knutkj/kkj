@@ -1,6 +1,6 @@
 ﻿/// <reference path="cbc.ns.js" />
 
-window.cbc = cbc || {};
+window.cbc = window.cbc || {};
 
 (function (p, $) {
 

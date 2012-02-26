@@ -48,9 +48,12 @@
         </tags>
     </metadata>
     <files>
+        <file src="cbc.README.txt" target="Content\Scripts" />
         <file src="cbc.js" target="Content\Scripts" />
         <file src="cbc.min.js" target="Content\Scripts" />        
         <file src="cbc.assert.js" target="Content\Scripts" />
         <file src="cbc.assert.min.js" target="Content\Scripts" />
+        <file src="cbc.parse.js" target="Content\Scripts" />
+        <file src="cbc.parse.min.js" target="Content\Scripts" />
     </files>
 </package>

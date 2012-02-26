@@ -1,0 +1,2 @@
+Visit https://github.com/knutkj/kkj/wiki/Call-by-Contract-(CbC)
+for documentation.

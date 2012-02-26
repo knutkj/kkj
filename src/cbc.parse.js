@@ -1,7 +1,7 @@
 ﻿/// <reference path="cbc.ns.js" />
 /// <reference path="cbc.assert.js" />
 
-window.cbc = cbc || {};
+window.cbc = window.cbc || {};
 
 (function (priv) {
 
