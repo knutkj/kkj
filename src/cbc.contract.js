@@ -1,4 +1,74 @@
-﻿function createSettingsObject (props) {
+﻿/// <reference path="cbc.ns.js" />
+/// <reference path="cbc.assert.js" />
+/// <reference path="cbc.parse.js" />
+
+window.cbc = cbc || {};
+
+(function (priv) {
+
+    var p = (priv.contract = {
+
+        contracts: [],
+
+        Contract: function (func) {
+            /// <summary>
+            /// Initalizes a new Contract instance
+            /// for the specified function.
+            /// </summary>
+
+            var info = p.parseFunc(func);
+
+            this.getFunc = function () {
+                /// <summary>
+                /// Get the contract's function.
+                /// </summary>
+                /// <return type="Function">
+                /// The contract's function.
+                /// </return>
+                return func;
+            };
+
+            this.getFuncName = function () {
+                /// <summary>
+                /// Get the name of the contract's function.
+                /// </summary>
+                /// <return type="String">
+                /// The name of the contract's function.
+                /// </return>
+                return info.name;
+            };
+        }
+    });
+
+    // ------------------------------------------------------------------------
+
+    cbc.contract = {};
+
+    cbc.contract.forFunc = function (func) {
+        /// <summary>
+        /// Creates a new contract for the specified function.
+        /// </summary>
+        /// <param name="func" type="Function">
+        /// The function to create the contract for.
+        /// </param>
+        /// <returns>
+        /// The created contract.
+        /// </returns>
+        cbc.assert.param("func", func)
+            .is.defined().and.notNull().and.func();
+        var contract = new p.Contract(func);
+        p.contracts.push(contract);
+        return contract;
+    };
+
+    cbc.contract.all = function () {
+        /// <summary>Get all cotracts.</summary>
+        return p.contracts;
+    };
+
+})(cbc.priv || {});
+
+function createSettingsObject (props) {
     var o = {};
     for (var i = 0; i < props.length; i++) {
         var prop = props[i];
@@ -237,11 +307,11 @@ var knut = createObject(person)
             .set_lastName("Johansen")
     .done();
 
-alert(knut);
+//alert(knut);
 
 function summer (ledd) {
 
-    alert(ledd.en + ledd.to);
+    //alert(ledd.en + ledd.to);
 
 }
 

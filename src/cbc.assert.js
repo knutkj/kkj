@@ -1,4 +1,6 @@
-﻿var cbc = cbc || {};
+﻿/// <reference path="cbc.ns.js" />
+
+window.cbc = cbc || {};
 
 (function (p, $) {
 

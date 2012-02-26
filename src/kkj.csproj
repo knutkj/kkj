@@ -33,10 +33,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="cbc.contract.js" />
+    <Content Include="cbc.contract.tests.js" />
+    <Content Include="cbc.ns.js" />
+    <Content Include="cbc.parse.js" />
+    <Content Include="cbc.parse.tests.js" />
     <Content Include="cbc.priv.js" />
+    <Content Include="cbc.README.txt" />
     <Content Include="tests2.html" />
     <Content Include="kkj.evt.tests.js" />
-    <Content Include="kkj.param.js" />
     <Content Include="kkj.data.js" />
     <Content Include="kkj.data.tests.js" />
     <Content Include="kkj.evt.js" />
@@ -67,7 +72,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>59359</DevelopmentServerPort>
+          <DevelopmentServerPort>63413</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>
