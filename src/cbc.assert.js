@@ -1,8 +1,11 @@
 ﻿/// <reference path="cbc.ns.js" />
 
 window.cbc = window.cbc || {};
+window.cbc.__namespace = true;
 
 (function (p, $) {
+
+    p.__namespace = true;
 
     p.typeAsserts = [ "bool", "func", "number", "object", "string" ];
 
@@ -13,7 +16,7 @@ window.cbc = window.cbc || {};
         this.and = newIs;
     };
 
-    p.assert = function (param, value) {
+    p.Assert = function (param, value) {
         /// <summary>
         /// Constructs a new assert.
         /// </summary>
@@ -106,7 +109,7 @@ window.cbc = window.cbc || {};
         };
     };
 
-    p.assert.prototype = {
+    p.Assert.prototype = {
 
         assertDefined: function () {
             /// <summary>
@@ -203,7 +206,10 @@ window.cbc = window.cbc || {};
         }
     };
 
+    p.Assert.__class = true;
+
     cbc.assert = {};
+    cbc.assert.__namespace = true;
 
     cbc.assert.that = cbc.assert;
 
@@ -217,7 +223,7 @@ window.cbc = window.cbc || {};
         /// <param name="value">
         /// The value of the parameter to assert.
         /// </param>
-        new p.assert("name", name).is
+        new p.Assert("name", name).is
             .defined()
             .and.notNull()
             .and.string()
@@ -226,7 +232,7 @@ window.cbc = window.cbc || {};
             /// <field name="is" type="Object">
             /// A list of assertions to apply.
             /// </field>
-            this.is = new p.assert(name, value).is
+            this.is = new p.Assert(name, value).is
         };
     };
 

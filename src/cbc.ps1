@@ -30,9 +30,14 @@ $minifier = New-Object -TypeName Microsoft.Ajax.Utilities.Minifier
     # Combining...
     #
     $sourceCode | Out-File -Append cbc.js
-    Get-Content -Path ($_ + ".min.js") |
-        Out-File -Append cbc.min.js
 }
+
+#
+# Minifying combined...
+#
+$sourceCode = Get-Content -Path cbc.js | Out-String
+$minifier.MinifyJavaScript($sourceCode) |
+    Out-File -FilePath cbc.min.js
 
 #
 # Creating NuGet package

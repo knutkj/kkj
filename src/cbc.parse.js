@@ -3,7 +3,11 @@
 
 window.cbc = window.cbc || {};
 
+window.cbc.__namespace = true;
+
 (function (priv) {
+
+    priv.__namespace = true;
 
     var trimPattern =
         /^\s*|\s*$/g;
@@ -26,12 +30,12 @@ window.cbc = window.cbc || {};
         /// <param name="func" type="Function">
         /// The function to get information for.
         /// </param>
-        /// <returns type="FuncInfo">
-        /// The initialized FuncInfo object.
-        /// </returns>
+        // <returns type="cbc.parse.FuncInfo">
+        // The initialized FuncInfo object.
+        // </returns>
         var nfo = p.parseFunc(func);
 
-        function getName () {
+        function get_name () {
             /// <summary>
             /// Get the name of the function.
             /// </summary>
@@ -41,7 +45,7 @@ window.cbc = window.cbc || {};
             return nfo.name;
         }
 
-        function getSummary () {
+        function get_summary () {
             /// <summary>
             /// Get the function's documentation summary.
             /// </summary>
@@ -51,17 +55,17 @@ window.cbc = window.cbc || {};
             return nfo.summary;
         }
 
-        function getParams () {
+        function get_params () {
             /// <summary>
             /// Get the parameter information list.
             /// </summary>
-            /// <returns type="Array">
+            /// <returns type="Array" elementType="String">
             /// The parameter information list.
             /// </returns>
             return nfo.params;
         }
 
-        function getReturnType () {
+        function get_returnType () {
             /// <summary>
             /// Get the type the function returns.
             /// </summary>
@@ -71,7 +75,7 @@ window.cbc = window.cbc || {};
             return nfo.returnType;
         }
 
-        function getReturnDesc () {
+        function get_returnDesc () {
             /// <summary>
             /// Get the function's return description.
             /// </summary>
@@ -81,12 +85,14 @@ window.cbc = window.cbc || {};
             return nfo.returnDesc;
         }
 
-        this.getName = getName;
-        this.getSummary = getSummary;
-        this.getParams = getParams;
-        this.getReturnType = getReturnType;
-        this.getReturnDesc = getReturnDesc;
+        this.get_name = get_name;
+        this.get_summary = get_summary;
+        this.get_params = get_params;
+        this.get_returnType = get_returnType;
+        this.get_returnDesc = get_returnDesc;
     }
+
+    FuncInfo.__class = true;    
 
     function toString () {
         /// <summary>
@@ -97,32 +103,32 @@ window.cbc = window.cbc || {};
         /// API help for the function represented by this FuncInfo
         /// object.
         /// </returns>
-        var returnType = this.getReturnType();
+        var returnType = this.get_returnType();
         var returnSyntax = returnType ? "<" + returnType + "> " : "";
         var params = [];
         var paramsHelp = [];
-        var paramNfos = this.getParams();
+        var paramNfos = this.get_params();
         var numParamNfos = paramNfos.length;
         for (var i = 0; i < numParamNfos; i++) {
             var paramNfo = paramNfos[i];
-            params.push(paramNfo.getType() + " " + paramNfo.getName());
+            params.push(paramNfo.get_type() + " " + paramNfo.get_name());
             paramsHelp.push(
                 "    " + paramNfo.toString().replace("\n", "\n    ")
             );
         }
         return [
             "NAME\n",
-            "    ", this.getName(), "\n\n",
+            "    ", this.get_name(), "\n\n",
             "SYNOPSIS\n",
-            "    ", this.getSummary().replace("\n", "\n    "), "\n\n",
+            "    ", this.get_summary().replace("\n", "\n    "), "\n\n",
             "SYNTAX\n",
-            "    ", returnSyntax, this.getName(), 
+            "    ", returnSyntax, this.get_name(), 
                 "(", params.join(", "), ")\n\n",
             "PARAMETERS\n",
             paramsHelp.join("\n\n"), "\n\n",
             "OUTPUTS\n",
             "    ", returnSyntax.replace(trimPattern, ""), "\n",
-            "        ", (this.getReturnDesc() || "").replace("\n", "\n        ")
+            "        ", (this.get_returnDesc() || "").replace("\n", "\n        ")
         ].join("");
     }
 
@@ -152,7 +158,7 @@ window.cbc = window.cbc || {};
         var doc = info.doc = info.doc || {};
         doc.description = doc.description || "";
 
-        function getName () {
+        function get_name () {
             /// <summary>
             /// Get the name of the parameter.
             /// </summary>
@@ -162,17 +168,17 @@ window.cbc = window.cbc || {};
             return info.name;
         }
 
-        function getType () {
+        function get_type () {
             /// <summary>
             /// Get the type of the parameter.
             /// </summary>
             /// <returns type="String">
             /// The type of the parameter.
             /// </returns>
-            return doc.type;
+            return doc.type || null;
         }
 
-        function getDesc () {
+        function get_desc () {
             /// <summary>
             /// Get the parameter's description.
             /// </summary>
@@ -182,9 +188,9 @@ window.cbc = window.cbc || {};
             return doc.description;
         }
 
-        this.getName = getName;
-        this.getType = getType;
-        this.getDesc = getDesc;
+        this.get_name = get_name;
+        this.get_type = get_type;
+        this.get_desc = get_desc;
     }
 
     (function () {
@@ -198,8 +204,8 @@ window.cbc = window.cbc || {};
             /// API help for the parameter.
             /// </returns>
             return [
-                "-", this.getName(), " <", this.getType(), ">", "\n",
-                "    ", this.getDesc()
+                "-", this.get_name(), " <", this.get_type(), ">", "\n",
+                "    ", this.get_desc()
             ].join("");
         }
     
@@ -211,7 +217,38 @@ window.cbc = window.cbc || {};
     
     })();
 
+    ParamInfo.__class = true;
+
     // ------------------------------------------------------------------------
+
+    function getDoc (funcString) {
+        /// <summary>
+        /// Get the function's API documentation.
+        /// </summary>
+        /// <param name="funcString" type="String">
+        /// The result of a function's toString.
+        /// </param>
+        /// <returns type="String">
+        /// The function's API documentation.
+        /// </returns>
+        var bodyString =
+            this.stripFuncDeclaration && 
+            this.stripFuncDeclaration(funcString) ||
+            p.stripFuncDeclaration(funcString);
+        var lines = bodyString.split("\n");
+        var numLines = lines.length;
+        var docLines = [];
+        for (var i = 0; i < numLines; i++) {
+            var line = lines[i].replace(trimPattern, "");
+            var res = docLinePattern.exec(line);
+            if (res !== null) {
+                docLines.push(res[1]);
+            } else {
+                break;
+            }
+        }
+        return docLines.join("\n");
+    }
 
     var p = (priv.parse = {
 
@@ -262,31 +299,7 @@ window.cbc = window.cbc || {};
             };
         },
 
-        getDoc: function (funcString) {
-            /// <summary>
-            /// Get the function API documentation.
-            /// </summary>
-            /// <param name="funcString" type="String">
-            /// The result of a function's toString.
-            /// </param>
-            /// <returns type="String">
-            /// The function API documentation.
-            /// </returns>
-            var bodyString = this.stripFuncDeclaration(funcString);
-            var lines = bodyString.split("\n");
-            var numLines = lines.length;
-            var docLines = [];
-            for (var i = 0; i < numLines; i++) {
-                var line = lines[i].replace(trimPattern, "");
-                var res = docLinePattern.exec(line);
-                if (res !== null) {
-                    docLines.push(res[1]);
-                } else {
-                    break;
-                }
-            }
-            return docLines.join("\n");
-        },
+        getDoc: getDoc,
 
         stripFuncDeclaration: function (funcString) {
             /// <summary>
@@ -383,9 +396,12 @@ window.cbc = window.cbc || {};
         }
     });
 
+    priv.parse.__namespace = true;
+
     // ------------------------------------------------------------------------
 
     cbc.parse = {};
+    cbc.parse.__namespace = true;
 
     function func (func) {
         /// <summary>
@@ -394,9 +410,6 @@ window.cbc = window.cbc || {};
         /// <param name="func" type="Function">
         /// The function to parse.
         /// </param>
-        /// <returns type="FuncInfo">
-        /// A FuncInfo object.
-        /// </returns>
         cbc.assert.param("func", func)
             .is.defined().and.notNull().and.func();
 
@@ -404,5 +417,6 @@ window.cbc = window.cbc || {};
     }
 
     cbc.parse.func = func;
+    cbc.parse.getDoc = p.getDoc;
 
 })(cbc.priv || {});

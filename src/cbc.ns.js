@@ -1,4 +1,6 @@
-﻿var cbc = new function () {
+﻿Object.__class = true;
+
+var cbc = new function () {
     /// <field name="assert" type="Object">
     /// Call by Contract (CbC) assert
     /// namespace with function asssertions.

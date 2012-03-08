@@ -251,8 +251,8 @@ test("parseFunc: creates second param", function () {
     // Verify SUT...
     strictEqual(res.params.length, 2);
     var param = res.params[1];
-    strictEqual(param.getName(), expectedName);
-    strictEqual(param.getDesc(), expectedDesc);
+    strictEqual(param.get_name(), expectedName);
+    strictEqual(param.get_desc(), expectedDesc);
     
     // Fixture teardown...
 });
@@ -300,6 +300,28 @@ test("parseParamList: two parameters, both returned", function () {
     strictEqual(list[1], "theSecond");
     
     // Fixture teardown...
+});
+
+test("getDoc: no strip in context, uses closure p", function () {
+
+    // Fixture setup...
+    var old = cbc.priv.parse.stripFuncDeclaration;
+    var stripCalled = false;
+    var expectedString = "";
+    cbc.priv.parse.stripFuncDeclaration = function (actualString) {
+        stripCalled = true;
+        strictEqual(actualString, expectedString);
+        return "";
+    };
+    
+    // Exercise SUT...
+    cbc.priv.parse.getDoc.call({}, expectedString);
+    
+    // Verify SUT...
+    strictEqual(stripCalled, true, "stripCalled");
+    
+    // Fixture teardown...
+    cbc.priv.parse.stripFuncDeclaration = old;
 });
 
 test("getDoc: calls stripFuncDeclaration, works", function () {
@@ -608,7 +630,7 @@ test("ctor: calls parseFunc with func", function () {
     cbc.priv.parse.parseFunc = old;
 });
 
-test("getName: returns parsed name", function () {
+test("get_name: returns parsed name", function () {
 
     // Fixture setup...
     var old = cbc.priv.parse.parseFunc;
@@ -620,7 +642,7 @@ test("getName: returns parsed name", function () {
     var nfo = new cbc.priv.parse.FuncInfo(function f () {});
     
     // Exercise SUT...
-    var actualName = nfo.getName();
+    var actualName = nfo.get_name();
     
     // Verify SUT...
     strictEqual(actualName, expectedName);
@@ -629,7 +651,7 @@ test("getName: returns parsed name", function () {
     cbc.priv.parse.parseFunc = old;
 });
 
-test("getSummary: returns parsed summary", function () {
+test("get_summary: returns parsed summary", function () {
 
     // Fixture setup...
     var old = cbc.priv.parse.parseFunc;
@@ -641,7 +663,7 @@ test("getSummary: returns parsed summary", function () {
     var nfo = new cbc.priv.parse.FuncInfo(function f () {});
     
     // Exercise SUT...
-    var actualSummary = nfo.getSummary();
+    var actualSummary = nfo.get_summary();
     
     // Verify SUT...
     strictEqual(actualSummary, expectedSummary);
@@ -650,7 +672,7 @@ test("getSummary: returns parsed summary", function () {
     cbc.priv.parse.parseFunc = old;
 });
 
-test("getParams: returns parsed params", function () {
+test("get_params: returns parsed params", function () {
 
     // Fixture setup...
     var old = cbc.priv.parse.parseFunc;
@@ -662,7 +684,7 @@ test("getParams: returns parsed params", function () {
     var nfo = new cbc.priv.parse.FuncInfo(function f () {});
     
     // Exercise SUT...
-    var actualParams = nfo.getParams();
+    var actualParams = nfo.get_params();
     
     // Verify SUT...
     strictEqual(actualParams, expectedParams);
@@ -671,7 +693,7 @@ test("getParams: returns parsed params", function () {
     cbc.priv.parse.parseFunc = old;
 });
 
-test("getReturnType: returns parsed params", function () {
+test("get_returnType: returns return type", function () {
 
     // Fixture setup...
     var old = cbc.priv.parse.parseFunc;
@@ -683,7 +705,7 @@ test("getReturnType: returns parsed params", function () {
     var nfo = new cbc.priv.parse.FuncInfo(function f () {});
     
     // Exercise SUT...
-    var actualReturnType = nfo.getReturnType();
+    var actualReturnType = nfo.get_returnType();
     
     // Verify SUT...
     strictEqual(actualReturnType, expectedReturnType);
@@ -692,7 +714,7 @@ test("getReturnType: returns parsed params", function () {
     cbc.priv.parse.parseFunc = old;
 });
 
-test("getReturnType: returns parsed params", function () {
+test("get_returnDesc: returns the return description", function () {
 
     // Fixture setup...
     var old = cbc.priv.parse.parseFunc;
@@ -704,7 +726,7 @@ test("getReturnType: returns parsed params", function () {
     var nfo = new cbc.priv.parse.FuncInfo(function f () {});
     
     // Exercise SUT...
-    var actualReturnDesc = nfo.getReturnDesc();
+    var actualReturnDesc = nfo.get_returnDesc();
     
     // Verify SUT...
     strictEqual(actualReturnDesc, expectedReturnDesc);
@@ -790,7 +812,7 @@ test("toString: no returns, nice string", function () {
 
 module("cbc.priv.parse.ParamInfo");
 
-test("getName: returns name specified in ctor", function () {
+test("get_name: returns name specified in ctor", function () {
 
     // Fixture setup...
     var expectedName = "theParamName";
@@ -799,7 +821,7 @@ test("getName: returns name specified in ctor", function () {
     });
     
     // Exercise SUT...
-    var actualName = param.getName();
+    var actualName = param.get_name();
     
     // Verify SUT...
     strictEqual(actualName, expectedName);
@@ -807,13 +829,13 @@ test("getName: returns name specified in ctor", function () {
     // Fixture teardown...
 });
 
-test("getName: no args, emty", function () {
+test("get_name: no args, emty", function () {
 
     // Fixture setup...
     var param = new cbc.priv.parse.ParamInfo();
     
     // Exercise SUT...
-    var actualName = param.getName();
+    var actualName = param.get_name();
     
     // Verify SUT...
     strictEqual(actualName, "");
@@ -821,7 +843,7 @@ test("getName: no args, emty", function () {
     // Fixture teardown...
 });
 
-test("getType: returns type specified in ctor", function () {
+test("get_type: returns type specified in ctor", function () {
 
     // Fixture setup...
     var expectedType = "String";
@@ -830,7 +852,7 @@ test("getType: returns type specified in ctor", function () {
     });
     
     // Exercise SUT...
-    var actualType = param.getType();
+    var actualType = param.get_type();
     
     // Verify SUT...
     strictEqual(actualType, expectedType);
@@ -838,7 +860,21 @@ test("getType: returns type specified in ctor", function () {
     // Fixture teardown...
 });
 
-test("getDesc: returns desc specified in ctor", function () {
+test("get_type: no type specified, null", function () {
+
+    // Fixture setup...
+    var param = new cbc.priv.parse.ParamInfo();
+    
+    // Exercise SUT...
+    var actualType = param.get_type();
+    
+    // Verify SUT...
+    strictEqual(actualType, null);
+    
+    // Fixture teardown...
+});
+
+test("get_desc: returns desc specified in ctor", function () {
 
     // Fixture setup...
     var expectedDesc = "desc";
@@ -847,7 +883,7 @@ test("getDesc: returns desc specified in ctor", function () {
     });
     
     // Exercise SUT...
-    var actualDesc = param.getDesc();
+    var actualDesc = param.get_desc();
     
     // Verify SUT...
     strictEqual(actualDesc, expectedDesc);
@@ -855,14 +891,14 @@ test("getDesc: returns desc specified in ctor", function () {
     // Fixture teardown...
 });
 
-test("getDesc: no doc, empty", function () {
+test("get_desc: no doc, empty", function () {
 
     // Fixture setup...
     var expectedDesc = "desc";
     var param = new cbc.priv.parse.ParamInfo({});
     
     // Exercise SUT...
-    var actualDesc = param.getDesc();
+    var actualDesc = param.get_desc();
     
     // Verify SUT...
     strictEqual(actualDesc, "");
@@ -883,7 +919,7 @@ test("toString: all info, nice string", function () {
     ].join("\n");
     
     // Exercise SUT...
-    var actualString = funcNfo.getParams()[0].toString();
+    var actualString = funcNfo.get_params()[0].toString();
     
     // Verify SUT...
     strictEqual(actualString, expectedString);
@@ -941,15 +977,26 @@ test("func: create FuncInfo", function () {
     cbc.priv.parse.FuncInfo = old;
 });
 
+test("getDoc: same as priv getDoc", function () {
+    
+    // Verify SUT...
+    strictEqual(
+        cbc.parse.getDoc,
+        cbc.priv.parse.getDoc
+    );
+    
+    // Fixture teardown...
+});
+
 function createDocumentation (func) {
     var res = cbc.parse.func(func);
     var doc = [
         "\n== Constructors ==",
-        "\n=== " + res.getName() + " ===\n",
+        "\n=== " + res.get_name() + " ===\n",
         "<pre>", res.toString(), "</pre>",
         "\n== Methods =="
     ];
-    var instance = new func();
+    var instance = new func(function () {});
     for (var funcName in instance) {
         var prop = instance[funcName];
         if (typeof prop === "function")

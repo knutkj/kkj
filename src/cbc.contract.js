@@ -16,9 +16,7 @@ window.cbc = cbc || {};
             /// for the specified function.
             /// </summary>
 
-            var info = p.parseFunc(func);
-
-            this.getFunc = function () {
+            this.getFuncInfo = function () {
                 /// <summary>
                 /// Get the contract's function.
                 /// </summary>
@@ -27,22 +25,71 @@ window.cbc = cbc || {};
                 /// </return>
                 return func;
             };
-
-            this.getFuncName = function () {
-                /// <summary>
-                /// Get the name of the contract's function.
-                /// </summary>
-                /// <return type="String">
-                /// The name of the contract's function.
-                /// </return>
-                return info.name;
-            };
         }
     });
 
     // ------------------------------------------------------------------------
 
     cbc.contract = {};
+
+    cbc.contract.__namespace = true;
+
+    var paramPattern = /^[^(]+\(([^)]*)/;
+
+    function wrap (func) {
+        /// <summary>
+        /// Wraps the function inside a contract.
+        /// </summary>
+        /// <returns type="Function">
+        /// The wrapped function.
+        /// </returns>
+        var funcInfo = cbc.parse.func(func);
+        var params = funcInfo.get_params();
+        var numParams = params.length;
+        var wrapper = function (args) {
+            /// doc
+            for (var i = 0; i < numParams; i++) {
+                var param = params[i];
+                var paramType = param.get_type();
+                if (paramType !== null) {
+                    var assert = cbc.assert
+                        .param(param.get_name(), arguments[i])
+                        .is;
+                    switch (paramType.toLowerCase()) {
+                        case "boolean":
+                            assert.bool();
+                            break;
+                        case "function":
+                            assert.func();
+                            break;
+                        case "number":
+                            assert.number();
+                            break;
+                        case "object":
+                            assert.object();
+                            break;
+                        case "string":
+                            assert.string();
+                            break;
+                    }
+                }
+            }
+            func.apply(this, arguments);
+        }
+        var funcString = func.toString();
+        var doc = "///" +
+            cbc.parse.getDoc(funcString).split("\n").join("");
+        var newFunc;
+        var newFuncString = wrapper
+            .toString()
+            .replace("args", paramPattern.exec(funcString)[1])
+            .replace("/// doc", doc);
+        eval("newFunc = " + newFuncString);
+
+
+        
+        return newFunc;
+    }
 
     cbc.contract.forFunc = function (func) {
         /// <summary>
@@ -65,6 +112,8 @@ window.cbc = cbc || {};
         /// <summary>Get all cotracts.</summary>
         return p.contracts;
     };
+
+    cbc.contract.wrap = wrap;
 
 })(cbc.priv || {});
 
