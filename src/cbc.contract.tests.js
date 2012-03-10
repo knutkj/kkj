@@ -1,51 +1,69 @@
 ﻿/// <reference path="qunit.js" />
 /// <reference path="cbc.ns.js" />
 /// <reference path="cbc.priv.js" />
+/// <reference path="cbc.parse.js" />
 /// <reference path="cbc.contract.js" />
 
-//function getFuncs (ns) {
-//    var funcs = [];
-//    for (var prop in ns) {
-//        if (typeof ns[prop] === "function") {
-//            funcs.push(ns[prop]);
-//        }
-//    }
-//    return funcs;
-//}
-//
-//function getFuncInfos (funcs) {
-//    var funcInfos = [];
-//    var i = 0;
-//    var func;
-//    for (; i < funcs.length; i++) {
-//        func = funcs[i];
-//        try {
-//            funcInfos.push(cbc.parse.func(func).getName());
-//        } catch (e) {}
-//    }
-//    return funcInfos;
-//}
-//
-//var funcs = getFuncs(cbc.priv.assert);
-//var funcInfos = getFuncInfos(funcs);
-//for (var i = 0; i < funcInfos.length; i++) {
-//    console.log(funcInfos[i]);
-//}
+module("cbc.priv.contract");
 
-module("cbc.priv.contract.Contract");
-
-test("getFuncInfo: returns FuncInfo specified in ctor", function () {
+test("assertionString: works for string", function () {
 
     // Fixture setup...
-    function func () {};
-    var funcInfo = new cbc.priv.parse.FuncInfo(func);
-    var contract = new cbc.priv.contract.Contract(funcInfo);
+    function f (a) {
+        /// <param name="a" type="String" />
+    }
+    var assertionString = cbc.priv.contract.assertionString;
+    var nfo = cbc.parse.func(f);
     
     // Exercise SUT...
-    var actualFuncInfo = contract.getFuncInfo();
+    var res = assertionString(nfo.get_params()[0]);
     
     // Verify SUT...
-    strictEqual(actualFuncInfo, funcInfo);
+    strictEqual([
+            'cbc.assert.param("a", a).is.',
+            "defined().and.notNull().and.string();"
+        ].join(""),
+        res
+    );
+    
+    // Fixture teardown...
+});
+
+test("assertionString: works for function", function () {
+
+    // Fixture setup...
+    function f (a) {
+        /// <param name="a" mayBeNull="true"
+        ///     optional="true" type="Function" />
+    }
+    var assertionString = cbc.priv.contract.assertionString;
+    var nfo = cbc.parse.func(f);
+    
+    // Exercise SUT...
+    var res = assertionString(nfo.get_params()[0]);
+    
+    // Verify SUT...
+    strictEqual('cbc.assert.param("a", a).is.func();', res);
+    
+    // Fixture teardown...
+});
+
+test("assertionString: works for boolean", function () {
+
+    // Fixture setup...
+    function f (a) {
+        /// <param name="a" optional="true" type="Boolean" />
+    }
+    var assertionString = cbc.priv.contract.assertionString;
+    var nfo = cbc.parse.func(f);
+    
+    // Exercise SUT...
+    var res = assertionString(nfo.get_params()[0]);
+    
+    // Verify SUT...
+    strictEqual(
+        'cbc.assert.param("a", a).is.notNull().and.bool();', res
+    );
     
     // Fixture teardown...
 });
@@ -54,47 +72,35 @@ test("getFuncInfo: returns FuncInfo specified in ctor", function () {
 
 module("cbc.contract");
 
-test("forFunc: invalid func, error", function () {
+test("wrap: no doc, no wrap", function () {
 
-    // Exercise and verify SUT...
-    raises(function () {
-        cbc.contract.forFunc();
-    }, function (e) {
-        return e.message === "Parameter func must be specified.";
-    });
-    raises(function () {
-        cbc.contract.forFunc(null);
-    });
-    raises(function () {
-        cbc.contract.forFunc(1);
-    });
-
+    // Fixture setup...
+    function func () {}
+    
+    // Exercise SUT...
+    var contract = cbc.contract.wrap(func);
+    
+    // Verify SUT...
+    strictEqual(contract, func);
+    
     // Fixture teardown...
 });
 
-test("ctor: adds contract to all", function () {
+test("wrap: empty doc, no wrap", function () {
 
     // Fixture setup...
-    var old = cbc.priv.contract.Contract;
-    var ctorCalled = false;
-    var expectedFunc = function () {};
-    cbc.priv.contract.Contract = function (actualFunc) {
-        ctorCalled = true;
-        strictEqual(expectedFunc, actualFunc);
-    };
-    var contract = cbc.contract.forFunc(expectedFunc);
+    function func () {
+        ///
+        ///
+    }
     
     // Exercise SUT...
-    var allContracts = cbc.contract.all();
+    var contract = cbc.contract.wrap(func);
     
     // Verify SUT...
-    strictEqual(ctorCalled, true, "ctorCalled");
-    strictEqual(allContracts.length, 1);
-    strictEqual(allContracts[0], contract);
-    strictEqual(cbc.priv.contract.contracts, allContracts);
+    strictEqual(contract, func);
     
     // Fixture teardown...
-    cbc.priv.contract.Contract = old;
 });
 
 test("wrap: copies documentation", function () {
@@ -113,6 +119,7 @@ test("wrap: copies documentation", function () {
     strictEqual(contractDoc, doc);
     
     // Fixture teardown...
+    cbc.priv.contract.contracts = [];
 });
 
 test("wrap: wrapped func called with this context", function () {
@@ -138,6 +145,7 @@ test("wrap: wrapped func called with this context", function () {
     strictEqual(otherFuncInContextCalled, true, "otherFuncInContextCalled");
     
     // Fixture teardown...
+    cbc.priv.contract.contracts = [];
 });
 
 test("wrap: wrapped func declared with args", function () {
@@ -154,6 +162,7 @@ test("wrap: wrapped func declared with args", function () {
     strictEqual(funcInfo.get_params()[0].get_name(), "a");
     
     // Fixture teardown...
+    cbc.priv.contract.contracts = [];
 });
 
 function getFuncWithArg (type) {
@@ -193,6 +202,7 @@ test("wrap: adds type assertions", function () {
     });
     
     // Fixture teardown...
+    cbc.priv.contract.contracts = [];
 });
 
 test("wrap: calls wrapped with args", function () {
@@ -201,6 +211,7 @@ test("wrap: calls wrapped with args", function () {
     var fCalled = false;
     var expectedArg = "arg";
     function f (a) {
+        /// <summary>The f function.</summary>
         fCalled = true;
         strictEqual(a, expectedArg);
     }
@@ -211,6 +222,136 @@ test("wrap: calls wrapped with args", function () {
     
     // Verify SUT...
     strictEqual(fCalled, true, "fCalled");
+    
+    // Fixture teardown...
+    cbc.priv.contract.contracts = [];
+});
+
+test("wrap: adds _func and get_func", function () {
+
+    // Fixture setup...
+    function f (a) {
+        /// <summary>The f function.</summary>
+    }
+    
+    // Exercise SUT...
+    var contract = cbc.contract.wrap(f);
+    
+    // Verify SUT...
+    strictEqual(contract._func, f);
+    strictEqual(contract.get_func(), f);
+    
+    // Fixture teardown...
+    cbc.priv.contract.contracts = [];
+});
+
+test("wrap: creates contract", function () {
+
+    // Fixture setup...
+    var old = cbc.contract.Contract;
+    function f (a) {
+        /// <summary>The f function.</summary>
+    }
+    var contractCreated = false;
+    cbc.contract.Contract = function (actualFunction) {
+        contractCreated = true;
+        strictEqual(actualFunction, f);
+        this.get_funcInfo = function () {
+            return cbc.parse.func(f);
+        }
+    }
+    
+    // Exercise SUT...
+    var contract = cbc.contract.wrap(f);
+    
+    // Verify SUT...
+    strictEqual(contractCreated, true, "contractCreated");
+    
+    // Fixture teardown...
+    cbc.contract.Contract = old;
+});
+
+test("test test", function () {
+
+    // Fixture setup...
+    function f (a, b) {
+        /// <param name="a" type="Number" />
+        /// <param name="b" type="Boolean" />
+    }
+    var fw = cbc.contract.wrap(f);
+    //alert(fw.toString());
+    fw(1, false);
+    // Exercise SUT...
+    
+    // Verify SUT...
+    
+    // Fixture teardown...
+    cbc.priv.contract.contracts = [];
+});
+
+// ----------------------------------------------------------------------------
+
+module("cbc.contract.Contract");
+
+test("ctor: does lots", function () {
+
+    // Fixture setup...
+    var old = cbc.parse.func;
+    function f () {
+        /// <summary>The f function.</summary>
+    }
+    var parseCalled = false;
+    var expectedFuncInfo = "nfo";
+    cbc.parse.func = function (actualFunc) {
+        parseCalled = true;
+        strictEqual(actualFunc, f);
+        return expectedFuncInfo;
+    };
+    
+    // Exercise SUT...
+    var contract = new cbc.contract.Contract(f);
+    
+    // Verify SUT...
+    strictEqual(contract._func, f);
+    strictEqual(parseCalled, true, "parseCalled");
+    strictEqual(contract._funcInfo, expectedFuncInfo);
+    var allContracts = cbc.contract.all();
+    strictEqual(allContracts.length, 1);
+    strictEqual(allContracts[0], contract);
+    strictEqual(f._contract, contract);
+    strictEqual(f.get_contract(), contract);
+    
+    // Fixture teardown...
+    cbc.parse.func = old;
+    cbc.priv.contract.contracts = [];
+});
+
+test("get_func: returns this._func", function () {
+
+    // Fixture setup...
+    var get_func = cbc.contract.Contract.prototype.get_func;
+    var ctx = { _func: "func" };
+    
+    // Exercise SUT...
+    var actualFunc = get_func.call(ctx);
+    
+    // Verify SUT...
+    strictEqual(actualFunc, ctx._func);
+    
+    // Fixture teardown...
+});
+
+test("get_funcInfo: returns this._funcInfo", function () {
+
+    // Fixture setup...
+    var get_funcInfo = cbc.contract.Contract.prototype.get_funcInfo;
+    var ctx = { _funcInfo: "funcInfo" };
+    
+    // Exercise SUT...
+    var actualFuncInfo = get_funcInfo.call(ctx);
+    
+    // Verify SUT...
+    strictEqual(actualFuncInfo, ctx._funcInfo);
     
     // Fixture teardown...
 });

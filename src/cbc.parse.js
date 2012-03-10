@@ -5,7 +5,7 @@ window.cbc = window.cbc || {};
 
 window.cbc.__namespace = true;
 
-(function (priv) {
+cbc.parse = (function (priv) {
 
     priv.__namespace = true;
 
@@ -59,7 +59,8 @@ window.cbc.__namespace = true;
             /// <summary>
             /// Get the parameter information list.
             /// </summary>
-            /// <returns type="Array" elementType="String">
+            /// <returns type="Array"
+            ///     elementType="cbc.priv.parse.ParamInfo">
             /// The parameter information list.
             /// </returns>
             return nfo.params;
@@ -142,21 +143,7 @@ window.cbc.__namespace = true;
     // ------------------------------------------------------------------------
     // ParamInfo object
 
-    function ParamInfo (info) {
-        /// <summary>
-        /// Initalizes a new Param instance
-        /// with the specified name.
-        /// </summary>
-        /// <param name="info" type="Object">
-        /// Parameter information.
-        /// </param>
-        /// <returns type="ParamInfo">
-        /// The initialized ParamInfo object.
-        /// </returns>
-        info = info || {};
-        info.name = info.name || "";
-        var doc = info.doc = info.doc || {};
-        doc.description = doc.description || "";
+    var ParamInfo = (function () {
 
         function get_name () {
             /// <summary>
@@ -165,7 +152,7 @@ window.cbc.__namespace = true;
             /// <returns type="String">
             /// The name of the parameter.
             /// </returns>
-            return info.name;
+            return this._name;
         }
 
         function get_type () {
@@ -175,7 +162,35 @@ window.cbc.__namespace = true;
             /// <returns type="String">
             /// The type of the parameter.
             /// </returns>
-            return doc.type || null;
+            return this._type;
+        }
+
+        function get_mayBeNull () {
+            /// <summary>
+            /// Get a boolean value indicating if
+            /// the parameter may be null or not.
+            /// </summary>
+            /// <remarks>
+            /// The default value is false.
+            /// </remarks>
+            /// <returns type="Boolean">
+            /// True if the parameter may be null or false.
+            /// </returns>
+            return this._mayBeNull;
+        }
+
+        function get_optional () {
+            /// <summary>
+            /// Get a boolean value indicating if
+            /// the parameter is optional or not.
+            /// </summary>
+            /// <remarks>
+            /// The default value is false.
+            /// </remarks>
+            /// <returns type="Boolean">
+            /// True if the parameter is optional or false.
+            /// </returns>
+            return this._optional;
         }
 
         function get_desc () {
@@ -185,15 +200,8 @@ window.cbc.__namespace = true;
             /// <returns type="String">
             /// The parameter's description.
             /// </returns>
-            return doc.description;
+            return this._desc;
         }
-
-        this.get_name = get_name;
-        this.get_type = get_type;
-        this.get_desc = get_desc;
-    }
-
-    (function () {
 
         function toString () {
             /// <summary>
@@ -208,16 +216,51 @@ window.cbc.__namespace = true;
                 "    ", this.get_desc()
             ].join("");
         }
+
+        function ParamInfo (info) {
+            /// <summary>
+            /// Initalizes a new ParamInfo instance
+            /// with the specified parameter information.
+            /// </summary>
+            /// <param name="info" type="Object">
+            /// An object with Parameter information.
+            /// Valid properties are:&#10;
+            ///  &#8226; String name: The name of the parameter&#10;
+            ///  &#8226; [String type = null]: The type of the parameter&#10;
+            ///  &#8226; [Boolean mayBeNull = false]: True if the
+            /// parameter may be null, or false otherwise&#10;
+            ///  &#8226; [Boolean optional = false]: True if it is
+            /// optional to specify the parameter, or false otherwise&#10;
+            ///  &#8226; [String desc = null]: Parameter description
+            /// </param>
+            //// <returns type="cbc.parse.ParamInfo">
+            //// The initialized ParamInfo object.
+            //// </returns>
+            info = info || {};
+            this._name = info.name;
+            this._type = info.type || null;
+            this._mayBeNull = info.mayBeNull || false;
+            this._optional = info.optional || false;
+            this._desc = info.desc || null;
+        }
+
+        ParamInfo.__class = true;
     
         ParamInfo.prototype = {
 
+            constructor: ParamInfo,
+            get_name: get_name,
+            get_type: get_type,
+            get_mayBeNull: get_mayBeNull,
+            get_optional: get_optional,
+            get_desc: get_desc,
             toString: toString
 
         };
+
+        return ParamInfo;
     
     })();
-
-    ParamInfo.__class = true;
 
     // ------------------------------------------------------------------------
 
@@ -247,7 +290,7 @@ window.cbc.__namespace = true;
                 break;
             }
         }
-        return docLines.join("\n");
+        return docLines.join("\n").replace(trimPattern, "") || null;
     }
 
     var p = (priv.parse = {
@@ -285,9 +328,8 @@ window.cbc.__namespace = true;
                         break;
                     }
                 }
-                params.push(new this.ParamInfo({ 
-                    name: param,
-                    doc: paramDoc
+                params.push(new this.ParamInfo(paramDoc || { 
+                    name: param
                 }));
             }
             return {
@@ -322,9 +364,8 @@ window.cbc.__namespace = true;
             /// Parses the specified documentation.
             /// </summary>
             doc = doc || "";
-            var doc = this.replaceParam(doc);
             var div = document.createElement("div");
-            div.innerHTML = doc;
+            div.innerHTML = this.replaceParam(doc);
 
             var summaryElement = div.getElementsByTagName("summary")[0];
             var summary = summaryElement && 
@@ -346,7 +387,7 @@ window.cbc.__namespace = true;
                     type: paramElement.getAttribute("type") || null,
                     optional: optional === "true",
                     mayBeNull: mayBeNull === "true",
-                    description: description
+                    desc: description || null
                 };
                 params.push(param);
             }
@@ -400,8 +441,8 @@ window.cbc.__namespace = true;
 
     // ------------------------------------------------------------------------
 
-    cbc.parse = {};
-    cbc.parse.__namespace = true;
+    var parse = {};
+    parse.__namespace = true;
 
     function func (func) {
         /// <summary>
@@ -416,7 +457,10 @@ window.cbc.__namespace = true;
         return new p.FuncInfo(func);
     }
 
-    cbc.parse.func = func;
-    cbc.parse.getDoc = p.getDoc;
+    parse.func = func;
+    parse.getDoc = p.getDoc;
+    parse.ParamInfo = p.ParamInfo;
+
+    return parse;
 
 })(cbc.priv || {});

@@ -208,7 +208,13 @@ test("parseFunc: creates first param", function () {
     // Fixture setup...
     var ctorCalled = false;
     var expectedName = "param";
-    var expectedDoc = { name: expectedName };
+    var expectedDoc = {
+        name: expectedName,
+        type: "type",
+        mayBeNull: "mayBeNull",
+        optional: "optional",
+        desc: "desc"
+    };
     var ctx = Ext.apply(parseFuncCtx(), {
         parseDoc: function () {
             return { params: [ expectedDoc ] };
@@ -216,7 +222,10 @@ test("parseFunc: creates first param", function () {
         ParamInfo: function (args) {
             ctorCalled = true;
             strictEqual(args.name, expectedName);
-            strictEqual(args.doc, expectedDoc);
+            strictEqual(args.type, expectedDoc.type);
+            strictEqual(args.mayBeNull, expectedDoc.mayBeNull);
+            strictEqual(args.optional, expectedDoc.optional);
+            strictEqual(args.desc, expectedDoc.desc);
         },
         parseParamList: function () {
             return [ expectedName ];
@@ -375,6 +384,20 @@ test("getDoc: handles func decl over some lines", function () {
     // Fixture teardown...
 });
 
+test("getDoc: empty doc with nl, null", function () {
+
+    // Fixture setup...
+    var docSrc = "function ()\n {///\n///\n"
+    
+    // Exercise SUT...
+    var doc = cbc.priv.parse.getDoc(docSrc);
+    
+    // Verify SUT...
+    strictEqual(doc, null);
+    
+    // Fixture teardown...
+});
+
 test("stripFuncDeclaration: works", function () {
 
     // Fixture setup...
@@ -513,7 +536,7 @@ test("parseDoc: param, info parsed", function () {
     strictEqual(param.type, "String");
     strictEqual(param.optional, false);
     strictEqual(param.mayBeNull, true);
-    strictEqual(param.description, "description");
+    strictEqual(param.desc, "description");
     
     // Fixture teardown...
 });
@@ -533,7 +556,7 @@ test("parseDoc: param, min info parsed", function () {
     strictEqual(param.type, null);
     strictEqual(param.optional, false);
     strictEqual(param.mayBeNull, false);
-    strictEqual(param.description, "");
+    strictEqual(param.desc, null);
     
     // Fixture teardown...
 });
@@ -810,18 +833,61 @@ test("toString: no returns, nice string", function () {
 
 // ----------------------------------------------------------------------------
 
-module("cbc.priv.parse.ParamInfo");
+module("cbc.parse.ParamInfo");
 
-test("get_name: returns name specified in ctor", function () {
+test("ctor: sets props", function () {
 
     // Fixture setup...
-    var expectedName = "theParamName";
-    var param = new cbc.priv.parse.ParamInfo({
-        name: expectedName
-    });
+    var props = {
+        name: "name",
+        type: "String",
+        mayBeNull: true,
+        optional: true,
+        desc: "Desc"
+    };
     
     // Exercise SUT...
-    var actualName = param.get_name();
+    var nfo = new cbc.parse.ParamInfo(props);
+    
+    // Verify SUT...
+    strictEqual(nfo._name, props.name);
+    strictEqual(nfo._type, props.type);
+    strictEqual(nfo._mayBeNull, props.mayBeNull);
+    strictEqual(nfo._optional, props.optional);
+    strictEqual(nfo._desc, props.desc);
+    
+    // Fixture teardown...
+});
+
+test("ctor: sets defaults", function () {
+
+    // Fixture setup...
+    var props = {
+        name: "name"
+    };
+    
+    // Exercise SUT...
+    var nfo = new cbc.parse.ParamInfo(props);
+    
+    // Verify SUT...
+    strictEqual(nfo._name, props.name);
+    strictEqual(nfo._type, null);
+    strictEqual(nfo._mayBeNull, false);
+    strictEqual(nfo._optional, false);
+    strictEqual(nfo._desc, null);
+    
+    // Fixture teardown...
+});
+
+test("get_name: returns this._name", function () {
+
+    // Fixture setup...
+    var get_name = cbc.parse.ParamInfo.prototype.get_name;
+    var expectedName = "theParamName";
+    var ctx = { _name: expectedName };
+    
+    // Exercise SUT...
+    var actualName = get_name.call(ctx);
     
     // Verify SUT...
     strictEqual(actualName, expectedName);
@@ -829,30 +895,15 @@ test("get_name: returns name specified in ctor", function () {
     // Fixture teardown...
 });
 
-test("get_name: no args, emty", function () {
+test("get_type: returns this._type", function () {
 
     // Fixture setup...
-    var param = new cbc.priv.parse.ParamInfo();
-    
-    // Exercise SUT...
-    var actualName = param.get_name();
-    
-    // Verify SUT...
-    strictEqual(actualName, "");
-    
-    // Fixture teardown...
-});
-
-test("get_type: returns type specified in ctor", function () {
-
-    // Fixture setup...
+    var get_type = cbc.parse.ParamInfo.prototype.get_type;
     var expectedType = "String";
-    var param = new cbc.priv.parse.ParamInfo({
-        doc: { type: expectedType }
-    });
+    var ctx = { _type: expectedType };
     
     // Exercise SUT...
-    var actualType = param.get_type();
+    var actualType = get_type.call(ctx);
     
     // Verify SUT...
     strictEqual(actualType, expectedType);
@@ -860,30 +911,15 @@ test("get_type: returns type specified in ctor", function () {
     // Fixture teardown...
 });
 
-test("get_type: no type specified, null", function () {
+test("get_desc: returns this._desc", function () {
 
     // Fixture setup...
-    var param = new cbc.priv.parse.ParamInfo();
-    
-    // Exercise SUT...
-    var actualType = param.get_type();
-    
-    // Verify SUT...
-    strictEqual(actualType, null);
-    
-    // Fixture teardown...
-});
-
-test("get_desc: returns desc specified in ctor", function () {
-
-    // Fixture setup...
+    var get_desc = cbc.parse.ParamInfo.prototype.get_desc;
     var expectedDesc = "desc";
-    var param = new cbc.priv.parse.ParamInfo({
-        doc: { description: expectedDesc }
-    });
+    var ctx = { _desc: expectedDesc };
     
     // Exercise SUT...
-    var actualDesc = param.get_desc();
+    var actualDesc = get_desc.call(ctx);
     
     // Verify SUT...
     strictEqual(actualDesc, expectedDesc);
@@ -891,17 +927,32 @@ test("get_desc: returns desc specified in ctor", function () {
     // Fixture teardown...
 });
 
-test("get_desc: no doc, empty", function () {
+test("get_mayBeNull: returns this._mayBeNull", function () {
 
     // Fixture setup...
-    var expectedDesc = "desc";
-    var param = new cbc.priv.parse.ParamInfo({});
+    var get_mayBeNull = cbc.parse.ParamInfo.prototype.get_mayBeNull;
+    var ctx = { _mayBeNull: true };
     
     // Exercise SUT...
-    var actualDesc = param.get_desc();
+    var optional = get_mayBeNull.call(ctx);
     
     // Verify SUT...
-    strictEqual(actualDesc, "");
+    strictEqual(optional, true);
+    
+    // Fixture teardown...
+});
+
+test("get_optional: true specified, true", function () {
+
+    // Fixture setup...
+    var get_optional = cbc.parse.ParamInfo.prototype.get_optional;
+    var ctx = { _optional: true };
+    
+    // Exercise SUT...
+    var optional = get_optional.call(ctx);
+    
+    // Verify SUT...
+    strictEqual(optional, true);
     
     // Fixture teardown...
 });
