@@ -138,7 +138,7 @@ cbc.contract = (function (priv) {
             return func;
         }
         var docComment = doc.split("\n").join("\n///");
-        var contract = new cbc.contract.Contract(func);        
+        var contract = new this.Contract(func);
         var funcInfo = contract.get_funcInfo();
         var params = funcInfo.get_params();
         var numParams = params.length;
@@ -150,7 +150,7 @@ cbc.contract = (function (priv) {
             "function (" + paramPattern.exec(funcString)[1] + ") {",
                 "///" + docComment,
                 assertions.join("\n"),
-                "func.apply(this, arguments);",
+                "return func.apply(this, arguments);",
             "}"
         ].join("\n");
         eval("var newFunc = " + newFuncString);
