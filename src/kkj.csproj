@@ -33,6 +33,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="cbc-tests.html" />
+    <Content Include="cbc-tests2.html" />
     <Content Include="cbc.contract.js" />
     <Content Include="cbc.contract.tests.js" />
     <Content Include="cbc.ns.js" />
@@ -40,8 +42,8 @@
     <Content Include="cbc.parse.tests.js" />
     <Content Include="cbc.priv.js" />
     <Content Include="cbc.README.txt" />
+    <Content Include="kkj-tests.html" />
     <Content Include="min-tests.html" />
-    <Content Include="tests2.html" />
     <Content Include="kkj.evt.tests.js" />
     <Content Include="kkj.data.js" />
     <Content Include="kkj.data.tests.js" />
@@ -50,7 +52,6 @@
     <Content Include="cbc.assert.tests.js" />
     <Content Include="qunit.css" />
     <Content Include="qunit.js" />
-    <Content Include="tests.html" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
