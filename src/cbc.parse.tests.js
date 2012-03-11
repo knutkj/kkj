@@ -311,6 +311,18 @@ test("parseParamList: two parameters, both returned", function () {
     // Fixture teardown...
 });
 
+test("getDoc: invalid func string, throws", function () {
+
+    // Exercise and verify SUT...
+    raises(function () {
+        cbc.parse.getDoc();
+    }, function (e) {
+        return e.message === "Parameter funcString must be specified.";
+    });
+    
+    // Fixture teardown...
+});
+
 test("getDoc: no strip in context, uses closure p", function () {
 
     // Fixture setup...
@@ -1077,7 +1089,7 @@ function createDocumentation (func) {
         "<pre>", res.toString(), "</pre>",
         "\n== Methods =="
     ];
-    var instance = new func(function () {});
+    var instance = new func(res);
     for (var funcName in instance) {
         var prop = instance[funcName];
         if (typeof prop === "function")

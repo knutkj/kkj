@@ -234,7 +234,7 @@ cbc.parse = (function (priv) {
 
         function ParamInfo (info) {
             /// <summary>
-            /// Initalizes a new ParamInfo instance
+            /// Initializes a new ParamInfo instance
             /// with the specified parameter information.
             /// </summary>
             /// <param name="info" type="Object">
@@ -248,9 +248,9 @@ cbc.parse = (function (priv) {
             /// optional to specify the parameter, or false otherwise&#10;
             ///  &#8226; [String desc = null]: Parameter description
             /// </param>
-            //// <returns type="cbc.parse.ParamInfo">
-            //// The initialized ParamInfo object.
-            //// </returns>
+            /// <returns type="cbc.parse.ParamInfo">
+            /// The initialized ParamInfo object.
+            /// </returns>
             cbc.assert.param("info", info).
                 is.defined().and.notNull().and.object();
             this._name = info.name;
@@ -280,14 +280,16 @@ cbc.parse = (function (priv) {
 
     function getDoc (funcString) {
         /// <summary>
-        /// Get the function's API documentation.
+        /// Get the function's Visual Studio JavaScript doc comments.
         /// </summary>
         /// <param name="funcString" type="String">
         /// The result of a function's toString.
         /// </param>
         /// <returns type="String">
-        /// The function's API documentation.
+        /// The function's Visual Studio JavaScript doc comments.
         /// </returns>
+        cbc.assert.param("funcString", funcString)
+            .is.defined().and.notNull().and.string();
         var bodyString =
             this.stripFuncDeclaration && 
             this.stripFuncDeclaration(funcString) ||
