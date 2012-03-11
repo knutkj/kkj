@@ -83,6 +83,19 @@ function wrapCtx () {
     }
 }
 
+test("all: returns contracts", function () {
+
+    // Fixture setup...
+    
+    // Exercise SUT...
+    var contracts = cbc.contract.all();
+    
+    // Verify SUT...
+    strictEqual(contracts, cbc.priv.contract.contracts);
+    
+    // Fixture teardown...
+});
+
 test("wrap: no doc, no wrap", function () {
 
     // Fixture setup...
@@ -299,6 +312,20 @@ test("test test", function () {
 // ----------------------------------------------------------------------------
 
 module("cbc.contract.Contract");
+
+test("ctor: asserts func is function", function () {
+
+    // Fixture setup...
+    
+    // Exercise and verify SUT...
+    raises(function () {
+        new cbc.contract.Contract();
+    }, function (e) {
+        return e.message === "Parameter func must be specified.";
+    });
+    
+    // Fixture teardown...
+});
 
 test("ctor: does lots", function () {
 

@@ -98,6 +98,8 @@ cbc.contract = (function (priv) {
             /// <returns type="cbc.contract.Contract">
             /// The initialized contract.
             /// </returns>
+            cbc.assert.param("func", func)
+                .is.defined().and.notNull().and.func();
             this._func = func;
             this._funcInfo = cbc.parse.func(func);
             p.contracts.push(this);
