@@ -22,18 +22,7 @@ cbc.parse = (function (priv) {
     // ------------------------------------------------------------------------
     // FuncInfo object
 
-    function FuncInfo (func) {
-        /// <summary>
-        /// Initializes a new FuncInfo object for the
-        /// specified function.
-        /// </summary>
-        /// <param name="func" type="Function">
-        /// The function to get information for.
-        /// </param>
-        // <returns type="cbc.parse.FuncInfo">
-        // The initialized FuncInfo object.
-        // </returns>
-        var nfo = p.parseFunc(func);
+    var FuncInfo = (function () {
 
         function get_name () {
             /// <summary>
@@ -42,7 +31,7 @@ cbc.parse = (function (priv) {
             /// <returns type="String">
             /// The name of the function.
             /// </returns>
-            return nfo.name;
+            return this._name;
         }
 
         function get_summary () {
@@ -52,7 +41,7 @@ cbc.parse = (function (priv) {
             /// <returns type="String">
             /// The function's documentation summary.
             /// </returns>
-            return nfo.summary;
+            return this._summary;
         }
 
         function get_params () {
@@ -60,10 +49,10 @@ cbc.parse = (function (priv) {
             /// Get the parameter information list.
             /// </summary>
             /// <returns type="Array"
-            ///     elementType="cbc.priv.parse.ParamInfo">
+            ///     elementType="cbc.parse.ParamInfo">
             /// The parameter information list.
             /// </returns>
-            return nfo.params;
+            return this._params;
         }
 
         function get_returnType () {
@@ -73,7 +62,7 @@ cbc.parse = (function (priv) {
             /// <returns type="String">
             /// The type the function returns.
             /// </returns>
-            return nfo.returnType;
+            return this._returnType;
         }
 
         function get_returnDesc () {
@@ -83,61 +72,87 @@ cbc.parse = (function (priv) {
             /// <returns type="String">
             /// The function's return description.
             /// </returns>
-            return nfo.returnDesc;
+            return this._returnDesc;
         }
 
-        this.get_name = get_name;
-        this.get_summary = get_summary;
-        this.get_params = get_params;
-        this.get_returnType = get_returnType;
-        this.get_returnDesc = get_returnDesc;
-    }
-
-    FuncInfo.__class = true;    
-
-    function toString () {
-        /// <summary>
-        /// Returns API help for the function represented by this
-        /// FuncInfo object in a PowerShell Cmdlet help kind of way.
-        /// </summary>
-        /// <returns type="String">
-        /// API help for the function represented by this FuncInfo
-        /// object.
-        /// </returns>
-        var returnType = this.get_returnType();
-        var returnSyntax = returnType ? "<" + returnType + "> " : "";
-        var params = [];
-        var paramsHelp = [];
-        var paramNfos = this.get_params();
-        var numParamNfos = paramNfos.length;
-        for (var i = 0; i < numParamNfos; i++) {
-            var paramNfo = paramNfos[i];
-            params.push(paramNfo.get_type() + " " + paramNfo.get_name());
-            paramsHelp.push(
-                "    " + paramNfo.toString().replace("\n", "\n    ")
-            );
+        function toString () {
+            /// <summary>
+            /// Returns API help for the function represented by this
+            /// FuncInfo object in a PowerShell Cmdlet help kind of way.
+            /// </summary>
+            /// <returns type="String">
+            /// API help for the function represented by this FuncInfo
+            /// object.
+            /// </returns>
+            var returnType = this.get_returnType();
+            var returnSyntax = returnType ? "<" + returnType + "> " : "";
+            var params = [];
+            var paramsHelp = [];
+            var paramNfos = this.get_params();
+            var numParamNfos = paramNfos.length;
+            for (var i = 0; i < numParamNfos; i++) {
+                var paramNfo = paramNfos[i];
+                params.push(paramNfo.get_type() + " " + paramNfo.get_name());
+                paramsHelp.push(
+                    "    " + paramNfo.toString().replace("\n", "\n    ")
+                );
+            }
+            return [
+                "NAME\n",
+                "    ", this.get_name(), "\n\n",
+                "SYNOPSIS\n",
+                "    ", this.get_summary().replace("\n", "\n    "), "\n\n",
+                "SYNTAX\n",
+                "    ", returnSyntax, this.get_name(), 
+                    "(", params.join(", "), ")\n\n",
+                "PARAMETERS\n",
+                paramsHelp.join("\n\n"), "\n\n",
+                "OUTPUTS\n",
+                "    ", returnSyntax.replace(trimPattern, ""), "\n",
+                "        ", (this.get_returnDesc() || "").replace("\n", "\n        ")
+            ].join("");
         }
-        return [
-            "NAME\n",
-            "    ", this.get_name(), "\n\n",
-            "SYNOPSIS\n",
-            "    ", this.get_summary().replace("\n", "\n    "), "\n\n",
-            "SYNTAX\n",
-            "    ", returnSyntax, this.get_name(), 
-                "(", params.join(", "), ")\n\n",
-            "PARAMETERS\n",
-            paramsHelp.join("\n\n"), "\n\n",
-            "OUTPUTS\n",
-            "    ", returnSyntax.replace(trimPattern, ""), "\n",
-            "        ", (this.get_returnDesc() || "").replace("\n", "\n        ")
-        ].join("");
-    }
 
-    FuncInfo.prototype = {
+        function FuncInfo (info) {
+            /// <summary>
+            /// Initializes a new FuncInfo object with the specified function
+            /// information.
+            /// </summary>
+            /// <param name="info" type="Object">
+            /// An object with function information. Valid properties are:&#10;
+            ///  &#8226; String name: The name of the function&#10;
+            ///  &#8226; [String summary = null]: Function summary&#10;
+            ///  &#8226; [Array params = []]: A list of ParamInfo objects&#10;
+            ///  &#8226; [String returnType = null]: Function return type&#10;
+            ///  &#8226; [String returnDesc = null]: Description of the
+            /// returned value
+            /// </param>
+            /// <returns type="cbc.parse.FuncInfo">
+            /// The initialized FuncInfo object.
+            /// </returns>
+            cbc.assert.param("info", info).
+                is.defined().and.notNull().and.object();
+            this._name = info.name;
+            this._summary = info.summary || null;
+            this._params = info.params || [];
+            this._returnType = info.returnType || null;
+            this._returnDesc = info.returnDesc || null;
+        }
 
-        toString: toString
+        FuncInfo.__class = true;
 
-    };
+        FuncInfo.prototype = {
+            constructor: FuncInfo,
+            get_name: get_name,
+            get_summary: get_summary,
+            get_params: get_params,
+            get_returnType: get_returnType,
+            get_returnDesc: get_returnDesc,
+            toString: toString
+        };
+
+        return FuncInfo;
+    })();
 
 
     // ------------------------------------------------------------------------
@@ -236,7 +251,8 @@ cbc.parse = (function (priv) {
             //// <returns type="cbc.parse.ParamInfo">
             //// The initialized ParamInfo object.
             //// </returns>
-            info = info || {};
+            cbc.assert.param("info", info).
+                is.defined().and.notNull().and.object();
             this._name = info.name;
             this._type = info.type || null;
             this._mayBeNull = info.mayBeNull || false;
@@ -247,7 +263,6 @@ cbc.parse = (function (priv) {
         ParamInfo.__class = true;
     
         ParamInfo.prototype = {
-
             constructor: ParamInfo,
             get_name: get_name,
             get_type: get_type,
@@ -255,7 +270,6 @@ cbc.parse = (function (priv) {
             get_optional: get_optional,
             get_desc: get_desc,
             toString: toString
-
         };
 
         return ParamInfo;
@@ -451,14 +465,17 @@ cbc.parse = (function (priv) {
         /// <param name="func" type="Function">
         /// The function to parse.
         /// </param>
+        /// <returns type="cbc.parse.FuncInfo">
+        /// A FuncInfo object.
+        /// </returns>
         cbc.assert.param("func", func)
             .is.defined().and.notNull().and.func();
-
-        return new p.FuncInfo(func);
+        return new this.FuncInfo(p.parseFunc(func));
     }
 
     parse.func = func;
     parse.getDoc = p.getDoc;
+    parse.FuncInfo = p.FuncInfo;
     parse.ParamInfo = p.ParamInfo;
 
     return parse;

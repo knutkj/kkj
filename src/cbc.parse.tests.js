@@ -630,132 +630,140 @@ test("replaceParam: works", function () {
 
 // ----------------------------------------------------------------------------
 
-module("cbc.priv.parse.FuncInfo");
+module("cbc.parse.FuncInfo");
 
-test("ctor: calls parseFunc with func", function () {
+test("ctor: asserts info is object", function () {
 
-    // Fixture setup...
-    var old = cbc.priv.parse.parseFunc;
-    function func () {};
-    var parseFuncCalled = false;
-    cbc.priv.parse.parseFunc = function (actualFunc) {
-        parseFuncCalled = true;
-        strictEqual(actualFunc, func);
-    };
-    
-    // Exercise SUT...
-    new cbc.priv.parse.FuncInfo(func);
-    
-    // Verify SUT...
-    strictEqual(parseFuncCalled, true);
+    // Exercise and verify SUT...
+    raises(function () {
+        new cbc.parse.FuncInfo();
+    }, function (e) {
+        return e.message === "Parameter info must be specified.";
+    });
     
     // Fixture teardown...
-    cbc.priv.parse.parseFunc = old;
 });
 
-test("get_name: returns parsed name", function () {
+test("ctor: sets props", function () {
 
     // Fixture setup...
-    var old = cbc.priv.parse.parseFunc;
-    var parseFuncCalled = false;
-    var expectedName = "funcName";
-    cbc.priv.parse.parseFunc = function () {
-        return { name: expectedName };
+    var props = {
+        name: "name",
+        summary: "summary",
+        params: [],
+        returnType: "returnType",
+        returnDesc: "returnDesc"
     };
-    var nfo = new cbc.priv.parse.FuncInfo(function f () {});
     
     // Exercise SUT...
-    var actualName = nfo.get_name();
+    var nfo = new cbc.parse.FuncInfo(props);
+    
+    // Verify SUT...
+    strictEqual(nfo._name, props.name);
+    strictEqual(nfo._summary, props.summary);
+    strictEqual(nfo._params, props.params);
+    strictEqual(nfo._returnType, props.returnType);
+    strictEqual(nfo._returnDesc, props.returnDesc);
+    
+    // Fixture teardown...
+});
+
+test("ctor: sets defaults", function () {
+
+    // Fixture setup...
+    var props = { name: "name" };
+    
+    // Exercise SUT...
+    var nfo = new cbc.parse.FuncInfo(props);
+    
+    // Verify SUT...
+    strictEqual(nfo._name, props.name);
+    strictEqual(nfo._summary, null);
+    strictEqual(Ext.isArray(nfo._params), true);
+    strictEqual(nfo._returnType, null);
+    strictEqual(nfo._returnDesc, null);
+    
+    // Fixture teardown...
+});
+
+test("get_name: returns this._name", function () {
+
+    // Fixture setup...
+    var get_name = cbc.parse.FuncInfo.prototype.get_name;
+    var expectedName = "funcName";
+    var ctx = { _name: expectedName };
+    
+    // Exercise SUT...
+    var actualName = get_name.call(ctx);
     
     // Verify SUT...
     strictEqual(actualName, expectedName);
     
     // Fixture teardown...
-    cbc.priv.parse.parseFunc = old;
 });
 
-test("get_summary: returns parsed summary", function () {
+test("get_summary: returns this._summary", function () {
 
     // Fixture setup...
-    var old = cbc.priv.parse.parseFunc;
-    var parseFuncCalled = false;
+    var get_summary = cbc.parse.FuncInfo.prototype.get_summary;
     var expectedSummary = "summary";
-    cbc.priv.parse.parseFunc = function () {
-        return { summary: expectedSummary };
-    };
-    var nfo = new cbc.priv.parse.FuncInfo(function f () {});
+    var ctx = { _summary: expectedSummary };
     
     // Exercise SUT...
-    var actualSummary = nfo.get_summary();
+    var actualSummary = get_summary.call(ctx);
     
     // Verify SUT...
     strictEqual(actualSummary, expectedSummary);
     
     // Fixture teardown...
-    cbc.priv.parse.parseFunc = old;
 });
 
-test("get_params: returns parsed params", function () {
+test("get_params: returns this._params", function () {
 
     // Fixture setup...
-    var old = cbc.priv.parse.parseFunc;
-    var parseFuncCalled = false;
+    var get_params = cbc.parse.FuncInfo.prototype.get_params;
     var expectedParams = "expectedParams";
-    cbc.priv.parse.parseFunc = function () {
-        return { params: expectedParams };
-    };
-    var nfo = new cbc.priv.parse.FuncInfo(function f () {});
+    var ctx = { _params: expectedParams };
     
     // Exercise SUT...
-    var actualParams = nfo.get_params();
+    var actualParams = get_params.call(ctx);
     
     // Verify SUT...
     strictEqual(actualParams, expectedParams);
     
     // Fixture teardown...
-    cbc.priv.parse.parseFunc = old;
 });
 
-test("get_returnType: returns return type", function () {
+test("get_returnType: returns this.returnType", function () {
 
     // Fixture setup...
-    var old = cbc.priv.parse.parseFunc;
-    var parseFuncCalled = false;
+    var get_returnType = cbc.parse.FuncInfo.prototype.get_returnType;
     var expectedReturnType = "returnType";
-    cbc.priv.parse.parseFunc = function () {
-        return { returnType: expectedReturnType };
-    };
-    var nfo = new cbc.priv.parse.FuncInfo(function f () {});
+    var ctx = { _returnType: expectedReturnType };
     
     // Exercise SUT...
-    var actualReturnType = nfo.get_returnType();
+    var actualReturnType = get_returnType.call(ctx);
     
     // Verify SUT...
     strictEqual(actualReturnType, expectedReturnType);
     
     // Fixture teardown...
-    cbc.priv.parse.parseFunc = old;
 });
 
-test("get_returnDesc: returns the return description", function () {
+test("get_returnDesc: returns this.returnDesc", function () {
 
     // Fixture setup...
-    var old = cbc.priv.parse.parseFunc;
-    var parseFuncCalled = false;
+    var get_returnDesc = cbc.parse.FuncInfo.prototype.get_returnDesc;
     var expectedReturnDesc = "returnDesc";
-    cbc.priv.parse.parseFunc = function () {
-        return { returnDesc: expectedReturnDesc };
-    };
-    var nfo = new cbc.priv.parse.FuncInfo(function f () {});
+    var ctx = { _returnDesc: expectedReturnDesc };
     
     // Exercise SUT...
-    var actualReturnDesc = nfo.get_returnDesc();
+    var actualReturnDesc = get_returnDesc.call(ctx);
     
     // Verify SUT...
     strictEqual(actualReturnDesc, expectedReturnDesc);
     
     // Fixture teardown...
-    cbc.priv.parse.parseFunc = old;
 });
 
 test("toString: nice string", function () {
@@ -835,6 +843,18 @@ test("toString: no returns, nice string", function () {
 
 module("cbc.parse.ParamInfo");
 
+test("ctor: asserts info is object", function () {
+
+    // Exercise and verify SUT...
+    raises(function () {
+        new cbc.parse.ParamInfo();
+    }, function (e) {
+        return e.message === "Parameter info must be specified.";
+    });
+    
+    // Fixture teardown...
+});
+
 test("ctor: sets props", function () {
 
     // Fixture setup...
@@ -848,7 +868,7 @@ test("ctor: sets props", function () {
     
     // Exercise SUT...
     var nfo = new cbc.parse.ParamInfo(props);
-    
+
     // Verify SUT...
     strictEqual(nfo._name, props.name);
     strictEqual(nfo._type, props.type);
@@ -1006,26 +1026,36 @@ test("func: invalid arg, error", function () {
     // Fixture teardown...
 });
 
-test("func: create FuncInfo", function () {
+test("func: calls parseFunc and creates FuncInfo", function () {
 
     // Fixture setup...
-    var old = cbc.priv.parse.FuncInfo;
-    var ctorCalled = false;
+    var old = cbc.priv.parse.parseFunc;
     var expectedFunc = function f () {};
-    cbc.priv.parse.FuncInfo = function (actualFunc) {
-        ctorCalled = true;
+    var parseFuncCalled = true;
+    var expectedFuncInfo = "nfo";
+    var ctorCalled = false;
+    cbc.priv.parse.parseFunc = function (actualFunc) {
+        parseFuncCalled = true;
         strictEqual(actualFunc, expectedFunc);
+        return expectedFuncInfo;
+    };
+    var ctx = {
+        FuncInfo: function (actualFuncInfo) {
+            ctorCalled = true;
+            strictEqual(actualFuncInfo, expectedFuncInfo);
+        }
     };
     
     // Exercise SUT...
-    var nfo = cbc.parse.func(expectedFunc);
+    var nfo = cbc.parse.func.call(ctx, expectedFunc);
     
     // Verify SUT...
+    strictEqual(parseFuncCalled, true, "parseFuncCalled");
     strictEqual(ctorCalled, true, "ctorCalled");
-    strictEqual(nfo instanceof cbc.priv.parse.FuncInfo, true);
+    strictEqual(nfo instanceof ctx.FuncInfo, true);
     
     // Fixture teardown...
-    cbc.priv.parse.FuncInfo = old;
+    cbc.priv.parse.parseFunc = old;
 });
 
 test("getDoc: same as priv getDoc", function () {
