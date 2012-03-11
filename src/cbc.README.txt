@@ -1,2 +1,6 @@
+Call by Contract (CbC) 1.2.0
+----------------------------
+Include cbc.js for all CbC functionality.
+
 Visit https://github.com/knutkj/kkj/wiki/Call-by-Contract-(CbC)
 for documentation.

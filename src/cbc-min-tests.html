@@ -28,8 +28,31 @@
             var nfo = cbc.parse.func(f);
 
             // Verify SUT...
-            strictEqual(nfo.getParams()[0].getName(), "a");
-            strictEqual(nfo.getName(), "f");
+            strictEqual(nfo.get_params()[0].get_name(), "a");
+            strictEqual(nfo.get_name(), "f");
+    
+            // Fixture teardown...
+        });
+
+        module("cbc.contract");
+
+        test("wrap: works", function () {
+            
+            // Fixture setup...
+            function f (a) {
+                /// <param name="a" type="String" />
+            }
+    
+            // Exercise SUT...
+            var fw = cbc.contract.wrap(f);            
+
+            // Verify SUT...
+            raises(function () {
+                fw()
+            }, function (e) {
+                return e.message === "Parameter a must be specified.";
+            });
+            strictEqual(fw.get_func(), f);
     
             // Fixture teardown...
         });

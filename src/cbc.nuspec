@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>cbc</id>
-        <version>1.1.0</version>
+        <version>1.2.0</version>
         <title>Call by Contract (CbC)</title>
         <authors>Knut Kristian Johansen</authors>
         <owners>Knut Kristian Johansen</owners>
@@ -12,34 +12,35 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <summary>
 
-            A JavaScript library with function argument assertions
-            and a function parser. It contains defined, notNull, bool,
-            func, number, object, string and notEmpty assertions.
-            The interface is fluid and specially optimised for the 
-            Visual Studio JavaScript IntelliSense.
+            A JavaScript library with function argument assertions,
+            a function parser and assertion wrapper functionality.
+            By wrapping your functions you get defined, notNull, bool,
+            func, number, object, string and notEmpty assertions for
+            free. The interface is specially optimised for the Visual
+            Studio JavaScript IntelliSense.
 
         </summary>
         <description>
 
-            A JavaScript library with function argument assertions
-            and a function parser. It contains defined, notNull, bool,
-            func, number, object, string and notEmpty assertions.
-            The interface is fluid and specially optimised for the
-            Visual Studio JavaScript IntelliSense.
+            A JavaScript library with function argument assertions,
+            a function parser and assertion wrapper functionality.
+            By wrapping your functions you get defined, notNull, bool,
+            func, number, object, string and notEmpty assertions for
+            free. The interface is specially optimised for the Visual
+            Studio JavaScript IntelliSense.
 
             Note that the assertions are not for unit testing,
             but for function arguments.
 
-            This is the second part of a JavaScript design by contract
-            (DbC) implementation. For more information about DcB visit:
+            This is a JavaScript design by contract (DbC) implementation.
+            For more information about DcB visit:
             http://en.wikipedia.org/wiki/Design_by_contract.
-
-            The name of this library is Call by Contract (CbC).
-            The name will be more natural in later releases with
-            more functionality.
 
         </description>
         <releaseNotes>
+            1.2.0: Breaking change in FuncInfo/ParamInfo getters. Changed from getPropertyName into get_propertyName.
+            1.2.0: New wrap function (cbc.contract.wrap).
+            1.2.0: New getDoc function (cbc.parse.getDoc).
             1.1.0: New function parser (cbc.parse.func).
         </releaseNotes>
         <copyright>Copyright 2012</copyright>
@@ -50,7 +51,8 @@
     <files>
         <file src="cbc.README.txt" target="Content\Scripts" />
         <file src="cbc.js" target="Content\Scripts" />
-        <file src="cbc.min.js" target="Content\Scripts" />        
+        <file src="cbc.min.js" target="Content\Scripts" />
+        <file src="cbc.ns.js" target="Content\Scripts" />
         <file src="cbc.assert.js" target="Content\Scripts" />
         <file src="cbc.assert.min.js" target="Content\Scripts" />
         <file src="cbc.parse.js" target="Content\Scripts" />

@@ -16,21 +16,24 @@ $minifier = New-Object -TypeName Microsoft.Ajax.Utilities.Minifier
 "" | Out-File -FilePath cbc.js
 "" | Out-File -FilePath cbc.min.js
 
-"cbc.assert", "cbc.parse" | ForEach-Object {
+"cbc.ns", "cbc.assert", "cbc.parse", "cbc.contract" |
+    ForEach-Object {
 
-    #
-    # Minifying...
-    #
-    $sourceCode = Get-Content -Path ($_ + ".js") |
-        Out-String
-    $minifier.MinifyJavaScript($sourceCode) |
-        Out-File -FilePath ($_ + ".min.js")
+        #
+        # Minifying...
+        #
+        $sourceCode = Get-Content -Path ($_ + ".js") |
+            Out-String
+        $minifier.MinifyJavaScript($sourceCode) |
+            Out-File -FilePath ($_ + ".min.js")
        
-    #
-    # Combining...
-    #
-    $sourceCode | Out-File -Append cbc.js
-}
+        #
+        # Combining...
+        #
+        Get-Content -Path ($_ + ".js") |
+            Where-Object { $_ -notmatch '^\s*///\s*<reference' } |
+            Out-File -Append cbc.js
+    }
 
 #
 # Minifying combined...
